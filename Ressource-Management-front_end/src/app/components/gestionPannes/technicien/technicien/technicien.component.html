@@ -1,0 +1,328 @@
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  <app-head-menu></app-head-menu>
+  <app-menu></app-menu>
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">
+                Gestion Techniciens
+              </h2>
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a>Techniciens</a></li>
+                  <li class="breadcrumb-item active">Techniciens</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+          <div class="form-group breadcrum-right">
+            <div class="dropdown">
+              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="feather icon-settings"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a
+                  class="dropdown-item" href="#">Calendar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-body">
+        <div class="row">
+          <div class="col-12">
+            <p>
+              Vous pouvez gérer les Techniciens de votre etablissement via cette
+              page
+            </p>
+          </div>
+        </div>
+        <!-- Column selectors with Export Options and print table -->
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Liste des Techniciens</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light" data-toggle="modal"
+                      data-target="#addTechnicienModal">
+                      <i class="fa fa-user-plus"></i> Nouveau technicien
+                    </button>
+                    <div class="table-responsive">
+                      <table class="table zero-configuration" id="techniciensTable">
+                        <thead>
+                          <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>CIN</th>
+                            <th>Specialite</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let technicien of techniciens">
+                            <td>{{ technicien.username }}</td>
+                            <td>{{ technicien.email }}</td>
+                            <td>{{ technicien.nom }}</td>
+                            <td>{{ technicien.prenom }}</td>
+                            <td>{{ technicien.cin }}</td>
+                            <td>{{ technicien.specialite }}</td>
+                            <td>
+                              <a class="feather icon-more-vertical" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                              </a>
+                              <div class="dropdown-menu">
+                                <a class="dropdown-item text-primary" (click)="
+                                  openModal(technicien, 'editTechnicien')
+                                " data-toggle="modal" data-target="#editTechnicienModal"><i
+                                    class="feather icon-edit"></i> Update</a>
+                                <a class="dropdown-item text-danger" (click)="
+                                  openModal(technicien, 'deleteTechnicien')
+                                " data-toggle="modal" data-target="#deleTechnicienModal"><i
+                                    class="feather icon-trash-2"></i> Delete</a>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Nom</th>
+                            <th>Prenom</th>
+                            <th>CIN</th>
+                            <th>Specialite</th>
+                            <th>Action</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Column selectors with Export Options and print table -->
+      </div>
+    </div>
+  </div>
+  <!-- END: Content-->
+
+  <!-- add Technicien modal -->
+  <div class="modal fade text-left" id="addTechnicienModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+    style="display: none" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel33">Ajouter un technicien</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <form [formGroup]="addTechnicienForm">
+          <div class="modal-body">
+            <h4>Informations Personnelles</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <label for="nom-column">Nom :</label>
+                <div class="form-label-group">
+                  <input type="text" id="nom-column" class="form-control" placeholder="Nom" name="nom" required
+                    formControlName="nom"
+                    [ngClass]="addTechnicienForm.controls['nom'].dirty && addTechnicienForm.hasError('required','nom')?'is-invalid':''">
+                  <small *ngIf="addTechnicienForm.controls['nom'].dirty && addTechnicienForm.hasError('required','nom')"
+                    class="text-danger">nom is required</small>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label for="prenom-column_1">Prenom :</label>
+                <div class="form-label-group">
+                  <input formControlName="prenom" type="text" id="prenom-column_1" class="form-control"
+                    placeholder="Prenom" name="prenom" required
+                    [ngClass]="addTechnicienForm.controls['prenom'].dirty && addTechnicienForm.hasError('required','prenom')?'is-invalid':''">
+                  <small
+                    *ngIf="addTechnicienForm.controls['prenom'].dirty && addTechnicienForm.hasError('required','prenom')"
+                    class="text-danger">prenom is required</small>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label for="username-column-1">Username :</label>
+                <div class="form-label-group">
+                  <input formControlName="username" type="text" id="username-column-1" class="form-control"
+                    placeholder="Username" name="username" required
+                    [ngClass]="addTechnicienForm.controls['username'].dirty && addTechnicienForm.hasError('required','username')?'is-invalid':''">
+                  <small
+                    *ngIf="addTechnicienForm.controls['username'].dirty && addTechnicienForm.hasError('required','username')"
+                    class="text-danger">username is required</small>
+                </div>
+
+              </div>
+              <div class="col-md-6 col-12">
+                <label for="password-floating">Password :</label>
+                <div class="form-label-group">
+                  <input formControlName="password" type="password" id="password-floating" class="form-control"
+                    name="password" placeholder="password" required
+                    [ngClass]="addTechnicienForm.controls['password'].dirty && addTechnicienForm.hasError('required','password')?'is-invalid':''">
+                  <small
+                    *ngIf="addTechnicienForm.controls['password'].dirty && addTechnicienForm.hasError('required','password')"
+                    class="text-danger">password is required</small>
+                </div>
+
+              </div>
+            </div>
+            <h4>Informations Professionels</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <label for="specialite-column">specialite :</label>
+                <div class="form-label-group">
+                  <input formControlName="specialite" type="text" id="specialite-column" class="form-control"
+                    placeholder="Specialite" name="specialite" required
+                    [ngClass]="addTechnicienForm.controls['specialite'].dirty && addTechnicienForm.hasError('required','specialite')?'is-invalid':''">
+                  <small
+                    *ngIf="addTechnicienForm.controls['specialite'].dirty && addTechnicienForm.hasError('required','specialite')"
+                    class="text-danger">specialite is required</small>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+              (click)="handleAjouterTechnicien()" [attr.data-dismiss]="addTechnicienForm.valid ? 'modal' : null">
+              Ajouter
+            </button>
+            <button type="reset" class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light"
+              data-dismiss="modal">
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- edit technicien modal  -->
+  <div class="modal fade text-left" id="editTechnicienModal" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel33" style="display: none" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel33">
+            Modifier le technicien {{ editTechnicien?.nom }}
+            {{ editTechnicien?.prenom }}
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <form #editTechnicienForm="ngForm">
+          <div class="modal-body">
+            <h4>Informations Personnelles</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input ngModel="{{ editTechnicien?.nom }}" type="text" id="nom-column-1" class="form-control"
+                    placeholder="Nom" name="nom" />
+                  <label for="nom-column-1">Nom</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input ngModel="{{ editTechnicien?.prenom }}" type="text" id="prenom-column" class="form-control"
+                    placeholder="Prenom" name="prenom" />
+                  <label for="prenom-column">Prenom</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input ngModel="{{ editTechnicien?.username }}" type="text" id="username-column" class="form-control"
+                    placeholder="Username" name="username" />
+                  <label for="username-column">Username</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input ngModel="{{ editTechnicien?.email }}" type="email" id="email-column" class="form-control"
+                    name="email" placeholder="Email" />
+                  <label for="email-column">Email</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input ngModel="{{ editTechnicien?.cin }}" type="text" id="cin-column" class="form-control" name="cin"
+                    placeholder="CIN" />
+                  <label for="cin-column">CIN</label>
+                </div>
+              </div>
+            </div>
+            <h4>Informations Professionels</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input ngModel="{{ editTechnicien?.specialite }}" type="text" id="specialite-column_1"
+                    class="form-control" placeholder="specialite" name="specialite" />
+                  <label for="specialite-column_1">specialite</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+              (click)="handleEditTechnicien(editTechnicienForm.value)" data-dismiss="modal">
+              Sauvgarder
+            </button>
+            <button type="reset" class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light"
+              data-dismiss="modal">
+              Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- delete technicien modal -->
+  <div class="modal fade text-left" id="deleTechnicienModal" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel120" style="display: none" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-danger white">
+          <h5 class="modal-title" id="myModalLabel120">
+            Confirmation de suppression
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Etes vous vraimant voulez supprimer le technicien
+          {{ deleteTechnicien?.nom }}
+          {{ deleteTechnicien?.prenom }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="handleDeleteTechnicien()" class="btn btn-danger waves-effect waves-light mr-1"
+            data-dismiss="modal">
+            Confirmer
+          </button>
+          <button type="button" class="btn btn-light waves-effect waves-light mr-1" data-dismiss="modal">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

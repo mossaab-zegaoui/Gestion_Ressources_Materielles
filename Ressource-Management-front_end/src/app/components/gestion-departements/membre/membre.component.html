@@ -1,0 +1,342 @@
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+     data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  <app-head-menu></app-head-menu>
+  <app-menu></app-menu>
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">Gestion Departements</h2>
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a>Departements</a>
+                  </li>
+                  <li class="breadcrumb-item active">Departements
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+          <div class="form-group breadcrum-right">
+            <div class="dropdown">
+              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                class="feather icon-settings"></i></button>
+              <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
+                class="dropdown-item" href="#">Email</a><a class="dropdown-item"
+                                                           href="#">Calendar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-body">
+        <div class="row">
+          <div class="col-12">
+            <p>Vous pouvez gérer les departements de votre etablissement via cette page</p>
+          </div>
+        </div>
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Liste des departements</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+                            data-toggle="modal" data-target="#addMembreModal">
+                      <i class="fa fa-user-plus"></i> Nouveau membre
+                    </button>
+                    <div class="table-responsive" *ngIf="membres$ | async as result" [ngSwitch]="result.state">
+                      <table class="table zero-configuration" id="membresTable">
+                        <thead>
+                        <tr>
+                          <th>Username</th>
+                          <th>Email</th>
+                          <th>Informations</th>
+
+                          <th>Departement</th>
+                          <th>Roles</th>
+                          <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody *ngSwitchCase="DataState.LOADED">
+                        <tr *ngFor="let membre of result.data">
+                          <td>{{ membre.username }}</td>
+                          <td>{{ membre.email }}</td>
+                          <td>
+                            <div class="dropdown">
+                              <a class="fa fa-user" id="userInfo"
+                                 data-toggle="dropdown" aria-haspopup="true"
+                                 aria-expanded="false"></a>
+                              <div class="dropdown-menu" aria-labelledby="userInfo"
+                                   x-placement="bottom-start"
+                                   style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 38px, 0px);">
+                                <div class="dropdown-item">Nom: {{ membre.nom }}
+                                </div>
+                                <div class="dropdown-item">Prenom: {{ membre.prenom
+                                  }}
+                                </div>
+                                <div class="dropdown-item">CIN: {{ membre.cin }}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td> {{membre?.departement?.nomDepartement}}</td>
+                          <td *ngFor="let role of membre.roles">{{role.nomRole}}</td>
+                          <td>
+                            <a class="feather icon-more-vertical" data-toggle="dropdown"
+                               aria-haspopup="true" aria-expanded="false">
+                            </a>
+                            <div class="dropdown-menu">
+                              <a class="dropdown-item text-primary"
+                                 (click)="openModal(membre, 'editMembre')"
+                                 data-toggle="modal"
+                                 data-target="#editMembreModal"><i
+                                class="feather icon-edit"></i> Update</a>
+                              <a class="dropdown-item text-danger"
+                                 (click)="openModal(membre, 'deleteMembre')"
+                                 data-toggle="modal"
+                                 data-target="#deleMembreModal"><i
+                                class="feather icon-trash-2"></i> Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                          <th>Username</th>
+                          <th>Email</th>
+                          <th>Informations</th>
+                          <th>Domaine</th>
+                          <th>Laboratoire</th>
+                          <th>Departement</th>
+                          <th>Roles</th>
+                          <th>Action</th>
+                        </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade text-left" id="addMembreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+       style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel33">Ajouter un membre</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <form [formGroup]="addMembreForm">
+          <div class="modal-body">
+            <h4>Informations Personnelles</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input type="text" id="username-column" class="form-control" placeholder="Username"
+                         name="username" formControlName="username"
+                  >
+                  <label for="username-column">Username</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input type="password" id="password-floating" class="form-control" name="password"
+                         placeholder="password" formControlName="password"
+                  >
+                  <label for="password-floating">Password</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input type="text" id="nom-column" class="form-control" formControlName="nom"
+                         placeholder="Nom" name="nom"
+                  >
+
+                  <label for="nom-column">Nom</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input type="text" id="prenom-column" class="form-control" placeholder="Prenom"
+                         name="prenom" formControlName="prenom"
+                  >
+                  <label for="prenom-column">Prenom</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input type="email" id="email-columnE" class="form-control" formControlName="email"
+                         placeholder="email" name="email"
+                  >
+
+                  <label for="email-columnE">email</label>
+                </div>
+              </div>
+            </div>
+            <h4>Informations Professionels</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <label for="departement-name">Departement</label>
+                <div class="form-label-group" *ngIf="departements$ | async as result">
+                  <select name="departement" class="form-control" id="departement-name"
+                          formControlName="departement"
+                  >
+                    <option *ngFor="let departement of result.data" [ngValue]="departement">{{
+                      departement.nomDepartement }}</option>
+                  </select>
+
+                </div>
+              </div>
+              <div class="col-md-6 col-12" *ngIf="roles$ | async as result" [ngSwitch]="result.state">
+                <label for="departement-name">Role</label>
+                <div class="form-label-group" *ngSwitchCase="DataState.LOADED">
+                  <select name="roles" class="form-control" id="role-name" formControlName="role">
+                    <option *ngFor="let role of result.data" [ngValue]="[role]">{{role.nomRole}}</option>
+                  </select>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+                    (click)="handleAjouterMembre()"
+                    [attr.data-dismiss]="addMembreForm.valid ? 'modal' : null">Ajouter
+            </button>
+            <button type="reset" class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light"
+                    data-dismiss="modal">Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- edit membre modal  -->
+  <div class="modal fade text-left" id="editMembreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+       style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel733">Modifier le membre </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <form [formGroup]="updateForm">
+          <div class="modal-body">
+            <h4>Informations Personnelles</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input formControlName="nom" type="text" id="nom-columnE"
+                         class="form-control" placeholder="Nom" name="nom" required>
+                  <label for="nom-column">Nom</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input formControlName="prenom" type="text" id="prenom-columnE"
+                         class="form-control" placeholder="Prenom" name="prenom">
+                  <label for="prenom-column">Prenom</label>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input formControlName="username"type="text" id="username-columnE"
+                         class="form-control" placeholder="Username" name="username">
+
+                  <label for="username-column">Username</label>
+
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-label-group">
+                  <input formControlName="email" type="email" id="email-column"
+                         class="form-control" name="email" placeholder="Email">
+                  <label for="email-column">Email</label>
+                </div>
+              </div>
+
+            </div>
+            <h4>Informations Professionels</h4>
+            <div class="row">
+              <div class="col-md-6 col-12" *ngIf="departements$ | async as result" [ngSwitch]="result.state">
+                <label for="departement-name">Departement</label>
+                <div class="form-label-group">
+                  <select name="departement" class="form-control" formControlName="departement">
+                    <option *ngFor="let departement of result.data" [ngValue]="departement">
+                      {{departement.nomDepartement}}
+                    </option>
+                  </select>
+
+                </div>
+              </div>
+              <div class="col-md-6 col-12" *ngIf="roles$ | async as result" [ngSwitch]="result.state">
+                <label for="departement-name">Role</label>
+                <div class="form-label-group" *ngSwitchCase="DataState.LOADED">
+                  <select name="roles" class="form-control" formControlName="roles">
+                    <option *ngFor="let roles of result.data" [ngValue]="[roles]">{{roles.nomRole}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer" (click)="updateMembre(updateForm)">
+            <button class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+                    data-dismiss="modal" type="submit">update
+            </button>
+            <button type="reset" class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light"
+                    data-dismiss="modal">Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- delete membre modal -->
+  <div class="modal fade text-left" id="deleMembreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel120"
+       style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-danger white">
+          <h5 class="modal-title" id="myModalLabel120">Confirmation de suppression</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Etes vous vraimant sûr de supprimer le membre
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="handleDeleteMembre()"
+                  class="btn btn-danger waves-effect waves-light mr-1" data-dismiss="modal">Confirmer
+          </button>
+          <button type="button" class="btn btn-light waves-effect waves-light mr-1"
+                  data-dismiss="modal">Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

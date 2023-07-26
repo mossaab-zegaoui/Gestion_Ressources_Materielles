@@ -1,0 +1,616 @@
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  <app-head-menu></app-head-menu>
+  <app-menu></app-menu>
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">Gestion Ressource</h2>
+
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item">Ordinateur</li>
+                  <li *ngIf="isOrdinateursDispo" class="breadcrumb-item active">Disponible</li>
+                  <li *ngIf="!isOrdinateursDispo" class="breadcrumb-item active">Non Livrées</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button [ngClass]="!isOrdinateursDispo?'btn-primary':''" class="btn m-1" class="btn  m-1"
+          (click)="getOrdinateurNonLivre()">Ordinateurs Non Livrees</button>
+        <button [ngClass]="isOrdinateursDispo?'btn-primary':''" class="btn m-1"
+          (click)="getOrdinateurDisponible()">Ordinateurs
+          Disponibles</button>
+
+      </div>
+
+      <div *ngIf="!isOrdinateursDispo" class="content-body">
+        <div class="row">
+        </div>
+        <!-- Column selectors with Export Options and print table -->
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Liste des Ordinateurs Non Livrés</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <div class="table-responsive">
+                      <table *ngIf="!isOrdinateursDispo" class="table zero-configuration" id="ordinateurNonLivre">
+                        <thead>
+                          <tr>
+                            <th>Marque</th>
+                            <th>Prix</th>
+                            <th>CPU</th>
+                            <th>RAM</th>
+                            <th>Disque Dur</th>
+                            <th>Ecran</th>
+                            <th>Nom de la societe</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let ordinateur of listeOrdinateurNonLivre">
+                            <td>{{ ordinateur.marque }}</td>
+                            <td>{{ ordinateur.prix }}</td>
+                            <td>{{ ordinateur.cpu }}</td>
+                            <td>{{ ordinateur.ram }}</td>
+                            <td>{{ ordinateur.disqueDur }}</td>
+                            <td>{{ ordinateur.ecran }}</td>
+                            <td>{{ getNomSociete(ordinateur.idFournisseur) }}</td>
+                            <td>
+                              <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#ajouterRessourceModal"
+                                (click)="openModal(ordinateur, 'editOrdinateur')"><i class="feather icon-upload"></i>
+                              </button>
+                              <button type="button" class="btn btn-danger mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#deleteRessourceModal"
+                                (click)="openModal(ordinateur, 'deleteOrdinateur')"><i
+                                  class="feather icon-trash"></i></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th>Marque</th>
+                            <th>Prix</th>
+                            <th>CPU</th>
+                            <th>RAM</th>
+                            <th>Disque Dur</th>
+                            <th>Ecran</th>
+                            <th>Nom de la societe</th>
+                            <th>Action</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+      <div *ngIf="isOrdinateursDispo" class="content-body">
+        <div class="row">
+        </div>
+        <!-- Column selectors with Export Options and print table -->
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Liste des Ordinateurs Disponibles</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <div class="table-responsive">
+                      <table class="table zero-configuration" id="ordinateurDisponible">
+                        <thead>
+                          <tr>
+                            <th>Code Barre</th>
+                            <th>Marque</th>
+                            <th>Date Livraison</th>
+                            <th>Date Fin Garantie</th>
+                            <th>Fournisseur</th>
+                            <th>Enseignant</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let ordinateur of ordinateursDisponibles">
+                            <td>{{ ordinateur.codeBarre }}</td>
+                            <td>{{ ordinateur.marque}}</td>
+                            <td>{{ ordinateur.dateLivraison }}</td>
+                            <td>{{ ordinateur.dateFinGarantie }}</td>
+                            <td>{{ getFournisseurNom(ordinateur!.idFournisseur) }}</td>
+                            <td>
+                              <p *ngIf="ordinateur!.idMembreDepartement">{{
+                                getEnseignantNom(ordinateur!.idMembreDepartement)}}</p>
+                            </td>
+                            <td *ngIf="!ordinateur!.idMembreDepartement">Pour le departement {{ ordinateur.idDepartement
+                              }}</td>
+                            <td>
+                              <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#ajouterRessourceModal"
+                                (click)="openModal(ordinateur, 'editOrdinateur')"><i class="feather icon-edit"></i>
+                              </button>
+                              <button type="button" class="btn btn-danger mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#deleteRessourceModal"
+                                (click)="openModal(ordinateur, 'deleteOrdinateur')"><i
+                                  class="feather icon-trash"></i></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th>Code Barre</th>
+                            <th>Marque</th>
+                            <th>Date Livraison</th>
+                            <th>Date Fin Garantie</th>
+                            <th>Fournisseur</th>
+                            <th>Enseignant</th>
+
+                            <th>Action</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- add departement modal -->
+        <div class="modal fade" id="addDepartementModal" tabindex="-1" role="dialog"
+          aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Ajouter un departement</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form #addDepartementForm="ngForm">
+                  <label>Nom Departement: </label>
+                  <div class="form-group">
+                    <input type="text" ngModel name="nomDepartement" placeholder="Email Address" class="form-control"
+                      placeholder="Nom Departement ex:(Génie Informatique)">
+                  </div>
+                  <!--button type="submit" (click)="handleAjouterDepartement(addDepartementForm)" class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal">Ajouter</button!-->
+                  <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
+                    data-dismiss="modal">Annuler</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- edit departement modal -->
+        <div class="modal fade" id="ajouterRessourceModal" tabindex="-1" role="dialog"
+          aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle1">Marquer Ressource Livré {{ editOrdinateur?.marque
+                  }}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+
+              <form #ajouterRessourceForm="ngForm">
+                <div class="modal-body">
+                  <h4>Informations Ressource</h4>
+                  <div class="row">
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="codeBarre">Code barre : </label>
+                        <input id="codeBarre" type="text" ngModel="{{ editOrdinateur?.codeBarre }}" name="codebarre"
+                          placeholder="codeBarre" class="form-control" placeholder="Code Barre ">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="marque">Marque : </label>
+                        <input id="marque" type="text" ngModel="{{ editOrdinateur?.marque }}" name="marque"
+                          placeholder="Marque" class="form-control" placeholder="Marque d'ordinateur ">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="prix">Prix </label>
+                        <input id="prix" type="text" ngModel="{{ editOrdinateur?.prix }}" name="prix" placeholder="Prix"
+                          class="form-control" placeholder="Prix Ordinateur ">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="cpu">CPU : </label>
+                        <input id="cpu" type="text" ngModel="{{ editOrdinateur?.cpu }}" name="cpu" placeholder="CPU"
+                          class="form-control" placeholder="CPU">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="ram">RAM : </label>
+                        <input id="ram" type="text" ngModel="{{ editOrdinateur?.ram }}" name="ram" placeholder="Ram"
+                          class="form-control" placeholder="Ram ">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="dd">Disque Dur : </label>
+                        <input id="dd" type="text" ngModel="{{ editOrdinateur?.disqueDur }}" name="disquedur"
+                          placeholder="Disque Dur" class="form-control" placeholder="Disque Dur ">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="ecran">Ecran : </label>
+                        <input id="ecran" type="text" ngModel="{{ editOrdinateur?.ecran }}" name="ecran"
+                          placeholder="Ecran" class="form-control" placeholder="Ecran ">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="datel">Date de livraison : </label>
+                        <input id="datel" type="date" ngModel="{{ editOrdinateur?.dateLivraison }}" name="datelivraison"
+                          placeholder="Date de livraison" class="form-control" placeholder="Date Livraison">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="datef">Date Fin Garantie : </label>
+                        <input id="datef" type="date" ngModel="{{ editOrdinateur?.dateFinGarantie }}"
+                          name="datefingarantie" placeholder="Date Fin Garantie" class="form-control"
+                          placeholder="Date Fin Garantie">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="e">Enseignant : </label>
+                        <select ngModel="{{editOrdinateur?.idMembreDepartement}}" id="e" class="form-control"
+                          name="enseignantid">
+                          <option *ngFor="let enseignant of listeEnseignant" value="{{enseignant.id}}">
+                            {{enseignant.prenom}} {{enseignant.nom}}</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <h4>Informations Fournisseur</h4><br>
+                  <div class="row">
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="nomSociete">Nom de la société : </label>
+                        <input id="nomSociete" type="text" ngModel="{{ editFournisseur?.nomSociete }}" name="NomSociete"
+                          placeholder="Nom de la socièté" class="form-control" placeholder="Nom de la socièté">
+
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="adresse">Adresse : </label>
+                        <input id="adresse" type="text" ngModel="{{ editFournisseur?.addresse }}" name="Adresse"
+                          placeholder="L'adresse de la socièté" class="form-control"
+                          placeholder="L'adresse de la socièté">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="gerant">Gérant : </label>
+                        <input id="gerant" type="text" ngModel="{{ editFournisseur?.gerant }}" name="Gerant"
+                          placeholder="Le gérant de la socièté" class="form-control"
+                          placeholder="Le gérant de la socièté">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+
+                        <label for="nf">Nom Fournisseur: </label>
+                        <input id="nf" type="text" ngModel="{{ editFournisseur?.nom }}" name="Nom" placeholder="Nom"
+                          class="form-control" placeholder="Nom">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="pf">Prénom Fournisseur : </label>
+                        <input id="pf" type="text" ngModel="{{ editFournisseur?.prenom }}" name="Prénom"
+                          placeholder="Prénom" class="form-control" placeholder="Prénom">
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="cin">CIN Fournisseur: </label>
+                        <input id="cin" type="text" ngModel="{{ editFournisseur?.cin }}" name="cin" placeholder="CIN"
+                          class="form-control" placeholder="CIN">
+
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-12">
+                      <div class="form-group">
+                        <label for="email">Email Fournisseur: </label>
+                        <input id="email" type="text" ngModel="{{ editFournisseur?.email }}" name="Email"
+                          placeholder="Email" class="form-control" placeholder="Email du Fournisseur">
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+
+
+
+                <button type="submit" (click)="handleAjouterOrdinateur(ajouterRessourceForm)"
+                  class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal">Sauvgarder</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
+                  data-dismiss="modal">Annuler</button>
+              </form>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- delete departement modal -->
+        <div class="modal fade text-left" id="deleteRessourceModal" tabindex="-1" role="dialog"
+          aria-labelledby="myModalLabel120" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+              <div class="modal-header bg-danger white">
+                <h5 class="modal-title" id="myModalLabel120">Confirmation de suppression</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Etes vous vraimant voulez supprimer l'ordinateur {{ deleteOrdinateur?.marque }}
+              </div>
+              <div class="modal-footer">
+                <button type="button" (click)="handleDeleteOrdinateur()"
+                  class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal">Confirmer</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
+                  data-dismiss="modal">Annuler</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- END: Content-->
+
+  <div class="sidenav-overlay"></div>
+  <div class="drag-target"></div>
+
+
+  <!-- add departement modal -->
+  <div class="modal fade" id="addDepartementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Ajouter un departement</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addDepartementForm="ngForm">
+            <label>Nom Departement: </label>
+            <div class="form-group">
+              <input type="text" ngModel name="nomDepartement" placeholder="Email Address" class="form-control"
+                placeholder="Nom Departement ex:(Génie Informatique)">
+            </div>
+            <!--button type="submit" (click)="handleAjouterDepartement(addDepartementForm)" class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal">Ajouter</button!-->
+            <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
+              data-dismiss="modal">Annuler</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- edit departement modal -->
+  <div class="modal fade" id="ajouterRessourceModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle1">Marquer Ressource Livré {{ editOrdinateur?.marque }}
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+
+        <form #ajouterRessourceForm="ngForm">
+          <div class="modal-body">
+            <h4>Informations Ressource</h4>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="codeBarre">Code barre : </label>
+                  <input id="codeBarre" type="text" ngModel="{{ editOrdinateur?.codeBarre }}" name="codebarre"
+                    placeholder="codeBarre" class="form-control" placeholder="Code Barre ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="marque">Marque : </label>
+                  <input id="marque" type="text" ngModel="{{ editOrdinateur?.marque }}" name="marque"
+                    placeholder="Marque" class="form-control" placeholder="Marque d'ordinateur ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="prix">Prix </label>
+                  <input id="prix" type="text" ngModel="{{ editOrdinateur?.prix }}" name="prix" placeholder="Prix"
+                    class="form-control" placeholder="Prix Ordinateur ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="cpu">CPU : </label>
+                  <input id="cpu" type="text" ngModel="{{ editOrdinateur?.cpu }}" name="cpu" placeholder="CPU"
+                    class="form-control" placeholder="CPU">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="ram">RAM : </label>
+                  <input id="ram" type="text" ngModel="{{ editOrdinateur?.ram }}" name="ram" placeholder="Ram"
+                    class="form-control" placeholder="Ram ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="dd">Disque Dur : </label>
+                  <input id="dd" type="text" ngModel="{{ editOrdinateur?.disqueDur }}" name="disquedur"
+                    placeholder="Disque Dur" class="form-control" placeholder="Disque Dur ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="ecran">Ecran : </label>
+                  <input id="ecran" type="text" ngModel="{{ editOrdinateur?.ecran }}" name="ecran" placeholder="Ecran"
+                    class="form-control" placeholder="Ecran ">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="datel">Date de livraison : </label>
+                  <input id="datel" type="date" ngModel="{{ editOrdinateur?.dateLivraison }}" name="datelivraison"
+                    placeholder="Date de livraison" class="form-control" placeholder="Date Livraison">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="datef">Date Fin Garantie : </label>
+                  <input id="datef" type="date" ngModel="{{ editOrdinateur?.dateFinGarantie }}" name="datefingarantie"
+                    placeholder="Date Fin Garantie" class="form-control" placeholder="Date Fin Garantie">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="e">Enseignant : </label>
+                  <select ngModel="{{editOrdinateur?.idMembreDepartement}}" id="e" class="form-control"
+                    name="enseignantid">
+                    <option *ngFor="let enseignant of listeEnseignant" value="{{enseignant.id}}">{{enseignant.prenom}}
+                      {{enseignant.nom}}</option>
+
+                  </select>
+                </div>
+              </div>
+            </div>
+            <h4>Informations Fournisseur</h4><br>
+            <div class="row">
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="nomSociete">Nom de la société : </label>
+                  <input id="nomSociete" type="text" ngModel="{{ editFournisseur?.nomSociete }}" name="NomSociete"
+                    placeholder="Nom de la socièté" class="form-control" placeholder="Nom de la socièté">
+
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="adresse">Adresse : </label>
+                  <input id="adresse" type="text" ngModel="{{ editFournisseur?.addresse }}" name="Adresse"
+                    placeholder="L'adresse de la socièté" class="form-control" placeholder="L'adresse de la socièté">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="gerant">Gérant : </label>
+                  <input id="gerant" type="text" ngModel="{{ editFournisseur?.gerant }}" name="Gerant"
+                    placeholder="Le gérant de la socièté" class="form-control" placeholder="Le gérant de la socièté">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+
+                  <label for="nf">Nom Fournisseur: </label>
+                  <input id="nf" type="text" ngModel="{{ editFournisseur?.nom }}" name="Nom" placeholder="Nom"
+                    class="form-control" placeholder="Nom">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="pf">Prénom Fournisseur : </label>
+                  <input id="pf" type="text" ngModel="{{ editFournisseur?.prenom }}" name="Prénom" placeholder="Prénom"
+                    class="form-control" placeholder="Prénom">
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="cin">CIN Fournisseur: </label>
+                  <input id="cin" type="text" ngModel="{{ editFournisseur?.cin }}" name="cin" placeholder="CIN"
+                    class="form-control" placeholder="CIN">
+
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group">
+                  <label for="email">Email Fournisseur: </label>
+                  <input id="email" type="text" ngModel="{{ editFournisseur?.email }}" name="Email" placeholder="Email"
+                    class="form-control" placeholder="Email du Fournisseur">
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+
+          <button type="submit" (click)="handleAjouterOrdinateur(ajouterRessourceForm)"
+            class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal">Sauvgarder</button>
+          <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
+            data-dismiss="modal">Annuler</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- delete departement modal -->
+  <div class="modal fade text-left" id="deleteRessourceModal" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel120" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-danger white">
+          <h5 class="modal-title" id="myModalLabel120">Confirmation de suppression</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Etes vous vraimant voulez supprimer l'ordinateur {{ deleteOrdinateur?.marque }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="handleDeleteOrdinateur()" class="btn btn-primary waves-effect waves-light mr-1"
+            data-dismiss="modal">Confirmer</button>
+          <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
+            data-dismiss="modal">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

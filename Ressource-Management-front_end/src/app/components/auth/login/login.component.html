@@ -1,0 +1,95 @@
+<body
+    class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  blank-page blank-page"
+    data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+    <div class="app-content content" *ngIf="(loginState$ |async) as state">
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper">
+            <div class="content-header row">
+            </div>
+            <div class="content-body" *ngIf="!state.loginSuccess">
+                <section class="row flexbox-container">
+                    <div class="col-xl-8 col-11 d-flex justify-content-center">
+                        <div class="card bg-authentication rounded-0 mb-0">
+                            <div class="row m-0">
+                                <div class="col-lg-6 d-lg-block d-none text-center align-self-center px-1 py-0">
+                                    <img src="../../../../assets/app-assets/images/pages/login.png" alt="branding logo">
+                                </div>
+                                <div class="col-lg-6 col-12 p-0">
+                                    <div class="card rounded-0 mb-0 px-2 p-3" [ngSwitch]="state.dataState">
+                                        <div class="card-header pb-1">
+                                            <div class="card-title">
+                                                <h4 class="mb-0">Login</h4>
+                                            </div>
+                                        </div>
+                                        <p class="px-2">Welcome back, please login to your account.</p>
+                                        <div class="card-content">
+                                            <div class="card-body pt-1">
+                                                <form [formGroup]="loginForm">
+                                                    <fieldset
+                                                        class="form-label-group form-group position-relative has-icon-left">
+                                                        <input [disabled]="state.dataState === DataState.LOADING"
+                                                            type="text" name="username" id="username"
+                                                            class="form-control" placeholder="Your Name" required
+                                                            data-validation-required-message="This name field is required"
+                                                            formControlName="username"
+                                                            [ngClass]="loginForm.controls['username'].dirty && loginForm.hasError('required','username')?'is-invalid':''">
+                                                        <small
+                                                            *ngIf="loginForm.controls['username'].dirty && loginForm.hasError('required','username')"
+                                                            class="text-danger">username is required</small>
+                                                        <div class="form-control-position">
+                                                            <i class="feather icon-user"></i>
+                                                        </div>
+                                                        <label for="username">username</label>
+                                                    </fieldset>
+                                                    <fieldset class="form-label-group position-relative has-icon-left">
+                                                        <input [disabled]="state.dataState === DataState.LOADING"
+                                                            type="password" class="form-control" id="user-password"
+                                                            placeholder="Password" required formControlName="password"
+                                                            name="password"
+                                                            [ngClass]="loginForm.controls['password'].dirty && loginForm.hasError('required','password')?'is-invalid':''">
+                                                        <small
+                                                            *ngIf="loginForm.controls['password'].dirty && loginForm.hasError('required','password')"
+                                                            class="text-danger"> password is required</small>
+                                                        <div class="form-control-position">
+                                                            <i class="feather icon-lock"></i>
+                                                        </div>
+                                                        <label for="username">Password</label>
+                                                    </fieldset>
+                                                    <div
+                                                        class="form-group d-flex justify-content-between align-items-center">
+                                                        <div class="text-right"><a routerLink="/reset-password"
+                                                                class="card-link">Forgot Password?</a></div>
+                                                    </div>
+                                                    <a routerLink="/register"
+                                                        class="btn btn-outline-primary float-left btn-inline">Register</a>
+                                                    <button [disabled]="state.dataState === DataState.LOADING"
+                                                        type="submit" class="btn btn-primary float-right btn-inline"
+                                                        id="type-success" (click)="onLogin()">Login</button>
+
+                                                </form>
+                                            </div>
+                                            <span *ngIf="state.dataState === DataState.LOADING"
+                                                class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                            <span *ngIf="state.dataState === DataState.LOADING">Loading...</span>
+                                        </div>
+                                        <div class="login-footer mt-1">
+                                            <div class="divider">
+                                                <div class="divider-text">OR</div>
+                                            </div>
+                                            <div class="footer-btn d-inline">
+                                                <a href="#" class="btn btn-google"><span
+                                                        class="fa fa-google"></span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>

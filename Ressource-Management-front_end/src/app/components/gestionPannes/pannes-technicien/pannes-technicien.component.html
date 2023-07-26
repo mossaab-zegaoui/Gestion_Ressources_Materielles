@@ -1,0 +1,238 @@
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+     data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  <app-head-menu></app-head-menu>
+  <app-menu></app-menu>
+<div class="app-content content">
+  <div class="content-overlay"></div>
+  <div class="header-navbar-shadow"></div>
+  <div class="content-wrapper">
+    <div class="content-header row">
+      <div class="content-header-left col-md-9 col-12 mb-2">
+        <div class="row breadcrumbs-top">
+          <div class="col-12">
+            <h2 class="content-header-title float-left mb-0">Gestion Pannes</h2>
+            <div class="breadcrumb-wrapper col-12">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a>Traiter panne</a></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+        <div class="form-group breadcrum-right">
+          <div class="dropdown">
+            <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="feather icon-settings"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a
+                class="dropdown-item" href="#">Calendar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="row">
+        <div class="col-12">
+          <p>Vous pouvez traiter les pannes des ressources via cette page</p>
+        </div>
+      </div>
+      <!-- Column selectors with Export Options and print table -->
+      <section id="column-selectors">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Pannes</h4>
+              </div>
+              <div class="card-content">
+                <div class="card-body card-dashboard">
+                  <div class="table-responsive">
+                    <table class="table zero-configuration" id="pannesTable">
+                      <thead>
+                        <tr>
+                          <th>Id panne</th>
+                          <th>Code barre</th>
+                          <th>Type</th>
+                          <th>Marque</th>
+                          <th>Date d'Apparition</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let Panne of Pannes">
+                          <td>{{ Panne?.id }}</td>
+                          <td>
+                            {{ getRessource(Panne.idRessource)?.codeBarre }}
+                          </td>
+                          <td>{{ getRessource(Panne.idRessource)?.type }}</td>
+                          <td>{{ getRessource(Panne.idRessource)?.marque }}</td>
+                          <td>{{ Panne?.dateApparition }}</td>
+                          <td>
+                            <button type="button" class="btn btn-primary btn-rounded" data-toggle="modal"
+                              data-target="#traiterPanneModal" (click)="openModal(Panne, 'traiterPanne')">
+                              <i class="feather icon-check-square"></i> Traiter
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <th>Id panne</th>
+                          <th>Code barre</th>
+                          <th>Type</th>
+                          <th>Marque</th>
+                          <th>Date d'Apparition</th>
+                          <th>Action</th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Column selectors with Export Options and print table -->
+    </div>
+  </div>
+</div>
+<!-- END: Content-->
+
+<div class="sidenav-overlay"></div>
+<div class="drag-target"></div>
+
+<!-- traitrer panne modal -->
+<div class="modal fade text-left" id="traiterPanneModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33"
+  style="display: none" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content" *ngIf="!severe">
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title" id="myModalLabel">Traiter un panne</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body" *ngIf="!severe">
+        <div>
+          <p>Veuillez indiquer l'état de la panne</p>
+        </div>
+      </div>
+      <div class="modal-footer" *ngIf="!severe">
+        <button type="reset" class="btn btn-primary mr-1 mb-1 waves-effect waves-light" (click)="handlePanneTraiter()"
+          data-dismiss="modal">
+          panne traiter
+        </button>
+        <button type="submit" class="btn btn-warning mr-1 mb-1 waves-effect waves-light" data-dismiss="modal"
+          (click)="Severe()">
+          Panne severe
+        </button>
+        <button type="button" class="btn btn-light mr-1 mb-1 waves-effect waves-light" data-dismiss="modal">
+          Annuler
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-content" *ngIf="severe">
+      <div class="modal-header bg-primary">
+        <h4 class="modal-title" id="myModalLabel33">Traiter un panne</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <form #editPanneForm="ngForm" *ngIf="severe" (ngSubmit)="handleEditPanne(editPanneForm)" novalidate>
+        <div class="modal-body" *ngIf="severe">
+          <div class="row">
+            <div class="col-md-12 col-12">
+              <label>Explication : </label>
+              <div class="form-group">
+                <div class="controls">
+                  <textarea ngModel type="textarea" id="explication-column" class="form-control"
+                    placeholder="Explication" name="explication" required
+                    data-validation-required-message="Ce champ est obligatoire"></textarea>
+                  <div *ngIf="explicationInvalid">
+                    <p class="text-danger">Ce champ est obligatoire</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <label>Ordre logiciel : </label>
+              <div class="form-group">
+                <div class="controls">
+                  <select ngModel name="ordre" class="form-control"  required
+                    data-validation-required-message="Ce champ est obligatoire">
+                    <option value="" disabled selected>Select default</option>
+                    <option value="{{ ordres.DEFAULT_SYSTEME }}" *ngIf="
+                        getRessource(editPanne?.idRessource!)?.type !==
+                        'IMPRIMANTE'
+                      ">
+                      Systeme
+                    </option>
+                    <option value="{{ ordres.DEFAULT_LOGICIEL_UTILITAIRE }}" *ngIf="
+                        getRessource(editPanne?.idRessource!)?.type !==
+                        'IMPRIMANTE'
+                      ">
+                      Logichiel utilitaire
+                    </option>
+                    <option value="{{ ordres.DEFAULT_MATERIEL }}">
+                      Materiel
+                    </option>
+                  </select>
+                  <div *ngIf="ordreInvalid">
+                    <p class="text-danger">Ce champ est obligatoire</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-12">
+              <label>Frequence : </label>
+              <div class="form-group">
+                <div class="controls">
+                  <select ngModel name="frequence" class="form-control" id="" required
+                    data-validation-required-message="Ce champ est obligatoire">
+                    <option value="" disabled selected>Select frequence</option>
+                    <option value="{{ frequences.RARE }}">Rare</option>
+                    <option value="{{ frequences.FREQUENTE }}">
+                      Frequente
+                    </option>
+                    <option value="{{ frequences.PERMANENTE }}">
+                      Permanente
+                    </option>
+                  </select>
+                  <div *ngIf="frequenceInvalid">
+                    <p class="text-danger">Ce champ est obligatoire</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 col-12">
+              <label>Constat : </label>
+              <div class="form-group">
+                <textarea ngModel type="textarea" id="constat" class="form-control" placeholder="constat" name="constat"
+                  required data-validation-required-message="Ce champ est obligatoire"></textarea>
+                <div *ngIf="constatInvalid">
+                  <p class="text-danger">Ce champ est obligatoire</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" *ngIf="severe">
+          <button type="submit" class="btn btn-primary mr-1 mb-1 waves-effect waves-light">
+            save
+          </button>
+          <button type="reset" class="btn btn-light mr-1 mb-1 waves-effect waves-light" data-dismiss="modal"
+            (click)="notSevere()">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>

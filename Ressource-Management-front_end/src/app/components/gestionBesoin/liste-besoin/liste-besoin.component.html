@@ -1,0 +1,254 @@
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  <app-head-menu></app-head-menu>
+  <app-menu></app-menu>
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">Gestion Besoins</h2>
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a>Besoins</a>
+                  </li>
+                  <li class="breadcrumb-item active">Liste des besoins
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+          <div class="form-group breadcrum-right">
+            <div class="dropdown">
+              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                  class="feather icon-settings"></i></button>
+              <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
+                  class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-body">
+        <div class="row">
+          <div class="col-12">
+            <p>Vous pouvez lister les besoins de votre departement via cette page</p>
+          </div>
+        </div>
+        <!-- Column selectors with Export Options and print table -->
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Liste des besoins</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <p>Envoyer une demande aux enseignants d'exprimer ses besoins</p>
+                    <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light" data-toggle="modal"
+                      data-target="#demandeBesoin">
+                      <i class="feather icon-shopping-cart"></i> Demander les besoins
+                    </button>
+                    <div class="table-responsive">
+                      <table class="table zero-configuration" id="listeBesoinTable">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Date Demande</th>
+                            <th>Status</th>
+                            <th>Departement</th>
+                            <th>Ressources</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let besoin of listeBesoinsByDepartement">
+                            <td>{{ besoin.id }}</td>
+                            <td>{{ besoin.dateDemande | date }}</td>
+                            <td>
+                              <div *ngIf="besoin.isBesoinInAppelOffre" class="chip chip-success">
+                                <div class="chip-body">
+                                  <div class="chip-text">Traité</div>
+                                </div>
+                              </div>
+                              <div *ngIf="!besoin.isBesoinInAppelOffre" class="chip chip-warning">
+                                <div class="chip-body">
+                                  <div class="chip-text">Non traité</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td>{{ getDepartementName(besoin.idDepartement) }}</td>
+                            <td>
+                              <a data-toggle="modal" data-target="#ressourcesBesoinModal"
+                                (click)="showRessourcesBesoin(besoin)" class="fonticon-wrap"><i
+                                  class="fa fa-th-list"></i></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th>ID</th>
+                            <th>Date Demande</th>
+                            <th>Status</th>
+                            <th>Departement</th>
+                            <th>Ressources</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Column selectors with Export Options and print table -->
+      </div>
+    </div>
+  </div>
+  <!-- END: Content-->
+
+  <div class="sidenav-overlay"></div>
+  <div class="drag-target"></div>
+
+
+  <div class="modal fade" id="ressourcesBesoinModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalScrollableTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Ressources</h4>
+              </div>
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="default-collapse collapse-bordered">
+                    <div class="card collapse-header">
+                      <div id="headingCollapse1" class="card-header" data-toggle="collapse" role="button"
+                        data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                        <span class="lead collapse-title">
+                          Ordinateurs: {{selectedBesoin?.ordinateurs?.length}}
+                        </span>
+                      </div>
+                      <div *ngIf=" selectedBesoin && selectedBesoin.ordinateurs.length > 0" id="collapse1"
+                        role="tabpanel" aria-labelledby="headingCollapse1" class="collapse">
+                        <div class="card-content">
+                          <div class="card-body">
+                            <ul class="activity-timeline timeline-left list-unstyled">
+                              <li *ngFor="let ord of selectedBesoin?.ordinateurs">
+                                <div class="timeline-icon bg-primary">
+                                  <i class="feather icon-monitor font-medium-2"></i>
+                                </div>
+                                <div class="timeline-info">
+                                  <!-- <p class="font-weight-bold">{{ ord.id }}</p> -->
+                                  <p>RAM: {{ ord.ram }} Go</p>
+                                  <p> CPU: {{ ord.cpu }} </p>
+                                  <p>Ecran: ({{ ord.ecran }}) </p>
+                                  <p> Disque dur: {{ ord.disqueDur }}</p>
+                                </div>
+                                <small class="">
+                                  <div *ngIf="ord.dateLivraison" class="chip chip-success">
+                                    <div class="chip-body">
+                                      <div class="chip-text">Livree</div>
+                                    </div>
+                                  </div>
+                                  <div *ngIf="!ord.dateLivraison" class="chip chip-danger">
+                                    <div class="chip-body">
+                                      <div class="chip-text">Non Livree</div>
+                                    </div>
+                                  </div>
+                                </small>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card collapse-header">
+                      <div id="headingCollapse2" class="card-header collapse-header collapsed" data-toggle="collapse"
+                        role="button" data-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                        <span class="lead collapse-title">
+                          Imprimantes: {{ selectedBesoin?.imprimantes?.length }}
+                        </span>
+                      </div>
+                      <div *ngIf="selectedBesoin && selectedBesoin.imprimantes.length > 0" id="collapse2"
+                        role="tabpanel" aria-labelledby="headingCollapse2" class="collapse" aria-expanded="false">
+                        <div class="card-content">
+                          <div class="card-body">
+                            <ul class="activity-timeline timeline-left list-unstyled">
+                              <li *ngFor="let imp of selectedBesoin?.imprimantes">
+                                <div class="timeline-icon bg-warning">
+                                  <i class="feather icon-printer font-medium-2"></i>
+                                </div>
+                                <div class="timeline-info">
+                                  <!-- <p class="font-weight-bold"> id: {{ imp.id }}</p> -->
+                                  <p>Vitesse d'impression: {{ imp.vitesseImpression }}</p>
+                                  <p>Resolution: {{ imp.resolution}}</p>
+                                </div>
+                                <small class="">
+                                  <div *ngIf="imp.dateLivraison" class="chip chip-success">
+                                    <div class="chip-body">
+                                      <div class="chip-text">Livree</div>
+                                    </div>
+                                  </div>
+                                  <div *ngIf="!imp.dateLivraison" class="chip chip-danger">
+                                    <div class="chip-body">
+                                      <div class="chip-text">Non Livree</div>
+                                    </div>
+                                  </div>
+                                </small>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade text-left" id="demandeBesoin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel120"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-primary white">
+          <h5 class="modal-title" id="myModalLabel120">Confirmation d'envoi</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Confirmer la demande des besoins aux enseignants de departement
+        </div>
+        <div class="modal-footer">
+          <button type="button" (click)="sendBesoinsRequest()" class="btn btn-primary waves-effect waves-light mr-1"
+            data-dismiss="modal">Confirmer</button>
+          <button type="button" class="btn btn-light waves-effect waves-light mr-1"
+            data-dismiss="modal">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

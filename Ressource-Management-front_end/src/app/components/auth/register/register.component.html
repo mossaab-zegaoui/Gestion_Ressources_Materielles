@@ -1,0 +1,109 @@
+<body *ngIf="(registerState$ | async) as state"
+  class="vertical-layout vertical-menu-modern 1-column  navbar-floating footer-static bg-full-screen-image  blank-page blank-page"
+  data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
+  <!-- BEGIN: Content-->
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+      </div>
+      <div class="content-body">
+        <section class="row flexbox-container">
+          <div class="col-xl-8 col-10 d-flex justify-content-center p-3">
+            <div class="card bg-authentication rounded-0 mb-0">
+              <div class="row m-0">
+                <div class="col-lg-6 d-lg-block d-none text-center align-self-center pl-0 pr-3 py-0">
+                  <img src="../../../../assets/app-assets/images/pages/register.jpg" alt="branding logo">
+                </div>
+                <div class="col-lg-6 col-12 p-0">
+                  <div class="card rounded-0 mb-0 p-4">
+                    <div class="card-header pt-50 pb-1">
+                      <div class="card-title">
+                        <h4 class="mb-0">Create Account</h4>
+                      </div>
+                    </div>
+                    <p class="px-2">Fill the below form to create a new account.</p>
+                    <div class="card-content">
+                      <div class="card-body pt-0">
+                        <form [formGroup]="registerForm">
+                          <div class="form-label-group position-relative has-icon-left">
+                            <input [disabled]="state.dataState === DataState.LOADING" type="text"
+                              id="first-name-floating-icon" class="form-control" formControlName="username"
+                              placeholder="username"
+                              [ngClass]="registerForm.controls['username'].dirty && registerForm.hasError('required','username')?'is-invalid':''">
+                            <div class="form-control-position">
+                              <i class="feather icon-user"></i>
+                            </div>
+                            <label for="first-name-floating-icon">username</label>
+                            <small
+                              *ngIf="registerForm.controls['username'].dirty && registerForm.hasError('required','username')"
+                              class="text-danger">Username is required</small>
+                          </div>
+
+                          <div class="form-label-group position-relative has-icon-left">
+                            <input [disabled]="state.dataState === DataState.LOADING" type="password"
+                              id="password-floating-icon" class="form-control" formControlName="password"
+                              placeholder="Password"
+                              [ngClass]="registerForm.controls['password'].dirty && registerForm.hasError('required','password')?'is-invalid':''">
+                            <small
+                              *ngIf="registerForm.controls['password'].dirty && registerForm.hasError('required','password')"
+                              class="text-danger"> Password is required</small>
+                            <div class="form-control-position has-icon-left">
+                              <i class="feather icon-lock"></i>
+                            </div>
+                            <label for="password-floating-icon">Password</label>
+                          </div>
+
+                          <div>
+                            <div class="form-label-group position-relative has-icon-left mt-1">
+                              <input [disabled]="state.dataState === DataState.LOADING" type="email" id="email"
+                                class="form-control" name="email" formControlName="email" placeholder="email"
+                                [ngClass]="registerForm.controls['email'].dirty && registerForm.hasError('required','email')?'is-invalid':''">
+                              <small
+                                *ngIf="registerForm.controls['email'].dirty && registerForm.hasError('required','email')"
+                                class="text-danger"> email is required</small>
+                              <div class="form-control-position">
+                                <i class="feather icon-info"></i>
+                              </div>
+                              <label for="email"> Email</label>
+                            </div>
+                            <div class="form-label-group position-relative has-icon-left mt-1">
+                              <input [disabled]="state.dataState === DataState.LOADING" type="text" id="nomSociete"
+                                class="form-control" name="nomSociete" formControlName="nomSociete"
+                                [ngClass]="registerForm.controls['nomSociete'].dirty && registerForm.hasError('required','nomSociete')?'is-invalid':''"
+                                placeholder="nom Societe">
+                              <small
+                                *ngIf="registerForm.controls['nomSociete'].dirty && registerForm.hasError('required','nomSociete')"
+                                class="text-danger"> nom Societe is required</small>
+                              <div class="form-control-position">
+                                <i class="feather icon-map-pin"></i>
+                              </div>
+                              <label for="nomSociete">Nom de la société</label>
+                            </div>
+
+                          </div>
+                          <div class="mb-1"></div>
+                          <!--  -->
+                          <a routerLink="/login" class="btn btn-outline-primary float-left btn-inline mb-50">Login</a>
+                          <button [disabled]="state.dataState === DataState.LOADING" (click)="onRegister()"
+                            type="submit" class="btn btn-primary float-right btn-inline mb-50">Register
+                          </button>
+                          <div class="d-flex justify-content-center mb-4">
+                            <span *ngIf="state.dataState === DataState.LOADING" class="spinner-border spinner-border-sm"
+                              role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+                            <span *ngIf="state.dataState === DataState.LOADING">Saving...</span>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</body>

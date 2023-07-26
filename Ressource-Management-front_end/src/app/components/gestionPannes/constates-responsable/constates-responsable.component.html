@@ -1,0 +1,200 @@
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  <app-head-menu></app-head-menu>
+  <app-menu></app-menu>
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">
+                Gestion constats
+              </h2>
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a>constats</a></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+          <div class="form-group breadcrum-right">
+            <div class="dropdown">
+              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="feather icon-settings"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" href="#">Chat</a><a class="dropdown-item" href="#">Email</a><a
+                  class="dropdown-item" href="#">Calendar</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-body">
+        <div class="row">
+          <div class="row">
+            <div class="col-12">
+              <p>
+                Vous pouvez visualiser et les constats des pannes ovia cette page
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Column selectors with Export Options and print table -->
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Pannes</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-bordered complex-headers" style="width: 100%;">
+                        <thead>
+                          <tr>
+                            <th colspan="4">Ressource</th>
+                            <th colspan="4">Panne</th>
+                            <th colspan="3"></th>
+                          </tr>
+                          <tr>
+                            <th>Code barre</th>
+                            <th>Type</th>
+                            <th>Marque</th>
+                            <th>Date de fin de garantie</th>
+                            <th>Date d'apparition</th>
+                            <th>Date constat</th>
+                            <th>Ordre</th>
+                            <th>Frequence</th>
+                            <th>Enseignant</th>
+                            <th>Technicien</th>
+                            <th>Constat</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let Panne of Pannes">
+                            <td>
+                              {{ getRessource(Panne.idRessource)?.codeBarre }}
+                            </td>
+                            <td>{{ getRessource(Panne.idRessource)?.type }}</td>
+                            <td>
+                              {{ getRessource(Panne.idRessource)?.marque }}
+                            </td>
+                            <td *ngIf="
+                              compareDate(
+                                getRessource(Panne.idRessource)
+                                  ?.dateFinGarantie!
+                              )
+                            ">
+                              {{
+                              getRessource(Panne.idRessource)?.dateFinGarantie
+                              }}
+                            </td>
+                            <td *ngIf="
+                              !compareDate(
+                                getRessource(Panne.idRessource)
+                                  ?.dateFinGarantie!
+                              )
+                            ">
+                              <div class="chip chip-danger">
+                                <div class="chip-body">
+                                  <div class="chip-text">expire</div>
+                                </div>
+                              </div>
+                            </td>
+                            <td>{{ Panne?.dateApparition }}</td>
+                            <td>{{ Panne?.dateConstat }}</td>
+                            <td>{{ Panne?.ordre }}</td>
+                            <td>{{ Panne?.frequence }}</td>
+                            <td>
+                              {{
+                              getMemberDepartement(Panne.idMembreDepartement)?.nom
+                              }}
+                            </td>
+                            <td>{{ getTechnicien(Panne.idTechnicien)?.nom }}</td>
+                            <td>
+                              <button type="button"
+                                class="btn btn-icon rounded-circle btn-outline-primary mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#examinerConstatModal" (click)="openModal(Panne)">
+                                <i class="feather icon-eye"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <th>Code barre</th>
+                            <th>Type</th>
+                            <th>Marque</th>
+                            <th>Date de fin de garantie</th>
+                            <th>Date d'apparition</th>
+                            <th>Date constat</th>
+                            <th>Ordre</th>
+                            <th>Frequence</th>
+                            <th>Enseignant</th>
+                            <th>Technicien</th>
+                            <th>Constat</th>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Column selectors with Export Options and print table -->
+      </div>
+    </div>
+  </div>
+  <!-- END: Content-->
+
+  <!-- signaler Panne modal -->
+  <div id="examinerConstatModal" class="modal fade text-left" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel120" style="display: none" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header modal-colored-header bg-primary">
+          <h5 class="modal-title" id="myModalLabel120">Examiner constat</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <fieldset>
+            <legend>Explication :</legend>
+            <p>{{ panneConstat?.explication }}</p>
+          </fieldset>
+          <legend>Constat :</legend>
+          <p>{{ panneConstat?.constat }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal"
+            (click)="handlePanneReparer()">
+            reparation
+          </button>
+          <button type="button" class="btn btn-primary waves-effect waves-light mr-1" *ngIf="
+            compareDate(
+              getRessource(panneConstat?.idRessource!)?.dateFinGarantie!
+            )
+          " data-dismiss="modal" (click)="handlePanneChanger()">
+            changement
+          </button>
+          <button type="button" class="btn btn-light waves-effect waves-light mr-1" data-dismiss="modal">
+            Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sidenav-overlay"></div>
+  <div class="drag-target"></div>
+</div>
