@@ -1,9 +1,11 @@
 package com.resourcesManager.backend.resourcesManager.controller;
 
+import com.resourcesManager.backend.resourcesManager.mapper.MapUserToUserDetails;
 import com.resourcesManager.backend.resourcesManager.model.Demande;
 import com.resourcesManager.backend.resourcesManager.services.DemandeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +21,10 @@ public class DemandeController {
         this.demandeService = demandeService;
     }
 
-    @PostMapping("/departements/{idDepartement}")
-    public void createDemande(@PathVariable Long idDepartement) {
-        demandeService.createDemande(idDepartement);
+    @PostMapping("/departements")
+    public void createDemande(@AuthenticationPrincipal MapUserToUserDetails userDetails) {
+
+        demandeService.createDemande(userDetails.getUser().getId());
     }
 
     @PutMapping("/seen/{id}")

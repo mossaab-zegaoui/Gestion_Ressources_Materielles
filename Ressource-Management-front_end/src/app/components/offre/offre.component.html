@@ -1,235 +1,239 @@
 <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-     data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
   <app-head-menu></app-head-menu>
   <app-menu></app-menu>
-<div class="app-content content">
-  <div class="content-overlay"></div>
-  <div class="header-navbar-shadow"></div>
-  <div class="content-wrapper">
-    <div class="content-header row">
-      <div class="content-header-left col-md-9 col-12 mb-2">
-        <div class="row breadcrumbs-top">
-          <div class="col-12">
-            <h2 class="content-header-title float-left mb-0">Gestion d'offres</h2>
-            <div class="breadcrumb-wrapper col-12">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a>Appel d'offre</a>
-                </li>
+  <div class="app-content content">
+    <div class="content-overlay"></div>
+    <div class="header-navbar-shadow"></div>
+    <div class="content-wrapper">
+      <div class="content-header row">
+        <div class="content-header-left col-md-9 col-12 mb-2">
+          <div class="row breadcrumbs-top">
+            <div class="col-12">
+              <h2 class="content-header-title float-left mb-0">Gestion d'offres</h2>
+              <div class="breadcrumb-wrapper col-12">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a>Appel d'offre</a>
+                  </li>
 
-              </ol>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
+          <div class="form-group breadcrum-right">
+            <div class="dropdown">
+              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                  class="feather icon-settings"></i></button>
+              <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
+                  class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
-        <div class="form-group breadcrum-right">
-          <div class="dropdown">
-            <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
-              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                class="feather icon-settings"></i></button>
-            <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
-                class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="content-body">
-      <div class="row">
-        <div class="col-12">
-          <p>Vous pouvez consulter les appels d'offres disponibles et y générer des offres</p>
-        </div>
-      </div>
-      <!-- Column selectors with Export Options and print table -->
-      <section id="column-selectors">
+      <div class="content-body">
         <div class="row">
           <div class="col-12">
-            <div *ngIf="!selectedAppelOffre" class="card">
-              <div class="card-header">
-                <h4 class="card-title">Envoyez vos offres ici!</h4>
-              </div>
-              <div class="card-content">
-                <div class="card-body card-dashboard">
-                  <div class="col-lg-6 col-sm-12">
-                    <div class="card">
-                      <div class="card-header">
-                        <h4 class="card-title">Appels d'offre disponibles</h4>
-                      </div>
-                      <div class="card-content">
-                        <div class="card-body">
-                          <ul class="activity-timeline timeline-left list-unstyled">
-                            <li *ngFor="let appelOffre of appelsOffresPublie">
+            <p>Vous pouvez consulter les appels d'offres disponibles et y générer des offres</p>
+          </div>
+        </div>
+        <!-- Column selectors with Export Options and print table -->
+        <section id="column-selectors">
+          <div class="row">
+            <div class="col-12">
+              <div *ngIf="!selectedAppelOffre" class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Envoyez vos offres ici!</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard">
+                    <div class="col-lg-6 col-sm-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h4 class="card-title">Appels d'offre disponibles</h4>
+                        </div>
+                        <div class="card-content">
+                          <div class="card-body">
+                            <ul class="activity-timeline timeline-left list-unstyled">
+                              <li *ngFor="let appelOffre of appelsOffresPublie">
 
-                              <a *ngIf="appelOffre.isAffected==false && ((getOffreOfFournisseur(appelOffre)?.isWaiting==false &&  getOffreOfFournisseur(appelOffre)?.isRejected==false &&  getOffreOfFournisseur(appelOffre)?.isAffected==false) || isFournisseurInAppelOffre(appelOffre)==false)"
-                                (click)="selectAppelOffre(appelOffre)" class="timeline-icon bg-primary">
-                                <i class="feather icon-plus font-medium-2"></i>
-                              </a>
-                              <a *ngIf="getOffreOfFournisseur(appelOffre)?.isWaiting==true" data-toggle="modal"
-                                data-target="#offresModal" (click)="selectSentAppelOffre(appelOffre)"
-                                class="timeline-icon bg-warning">
-                                <i class="feather icon-info font-medium-2"></i>
-                              </a>
-                              <a *ngIf="getOffreOfFournisseur(appelOffre)?.isRejected==true" data-toggle="modal"
-                                data-target="#offresModal" (click)="selectSentAppelOffre(appelOffre)"
-                                class="timeline-icon bg-danger">
-                                <i class="feather icon-alert-octagon font-medium-2"></i>
-                              </a>
-                              <a *ngIf="getOffreOfFournisseur(appelOffre)?.isAffected==true" data-toggle="modal"
-                                data-target="#offresModal" (click)="selectSentAppelOffre(appelOffre)"
-                                class="timeline-icon badge-success">
-                                <i class="feather icon-check font-medium-2"></i>
-                              </a>
-                              <div class="timeline-info">
-                                <p class="font-weight-bold">Appel offre ID:{{appelOffre.id}}</p>
-                                <span>Publié le {{appelOffre.datePub|date}}</span>
-                              </div>
+                                <a *ngIf="appelOffre.isAffected==false && ((getOffreOfFournisseur(appelOffre)?.isWaiting==false &&  getOffreOfFournisseur(appelOffre)?.isRejected==false &&  getOffreOfFournisseur(appelOffre)?.isAffected==false) || isFournisseurInAppelOffre(appelOffre)==false)"
+                                  (click)="selectAppelOffre(appelOffre)" class="timeline-icon bg-primary">
+                                  <i class="feather icon-plus font-medium-2"></i>
+                                </a>
+                                <a *ngIf="getOffreOfFournisseur(appelOffre)?.isWaiting==true" data-toggle="modal"
+                                  data-target="#offresModal" (click)="selectSentAppelOffre(appelOffre)"
+                                  class="timeline-icon bg-warning">
+                                  <i class="feather icon-info font-medium-2"></i>
+                                </a>
+                                <a *ngIf="getOffreOfFournisseur(appelOffre)?.isRejected==true" data-toggle="modal"
+                                  data-target="#offresModal" (click)="selectSentAppelOffre(appelOffre)"
+                                  class="timeline-icon bg-danger">
+                                  <i class="feather icon-alert-octagon font-medium-2"></i>
+                                </a>
+                                <a *ngIf="getOffreOfFournisseur(appelOffre)?.isAffected==true" data-toggle="modal"
+                                  data-target="#offresModal" (click)="selectSentAppelOffre(appelOffre)"
+                                  class="timeline-icon badge-success">
+                                  <i class="feather icon-check font-medium-2"></i>
+                                </a>
+                                <div class="timeline-info">
+                                  <p class="font-weight-bold">Appel offre ID:{{appelOffre.id}}</p>
+                                  <span>Publié le {{appelOffre.datePub|date}}</span>
+                                </div>
 
-                            </li>
+                              </li>
 
-                          </ul>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <section *ngIf="selectedAppelOffre" id="row-grouping">
-              <div class="row">
-                <div class="col-12">
-                  <div class="card">
-                    <div class="card-header">
-                      <!-- <h4 class="card-title">Row grouping</h4> -->
-                      <button type="button" data-toggle="modal" data-target="#dateModal"
-                        class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">Envoyer offre</button>
+              <section *ngIf="selectedAppelOffre" id="row-grouping">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-header">
+                        <!-- <h4 class="card-title">Row grouping</h4> -->
+                        <button type="button" data-toggle="modal" data-target="#dateModal"
+                          class="btn btn-outline-primary mr-1 mb-1 waves-effect waves-light">Envoyer offre</button>
 
-                      <button _ngcontent-cqd-c28="" type="button" (click)="unSelectAppelOffre()"
-                        class="btn btn-icon rounded-circle btn-outline-warning mr-1 mb-1 waves-effect waves-light"><i
-                          _ngcontent-cqd-c28="" class="fa fa-arrow-left"></i></button>
-                    </div>
-                    <div class="card-content">
-                      <div class="card-body card-dashboard">
-                        <div class="table-responsive">
-                          <div id="DataTables_Table_1_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                            <div class="row">
-                              <div class="col-sm-12 col-md-6">
-                                <div class="dataTables_length" id="DataTables_Table_1_length"><label>Show <select
-                                      name="DataTables_Table_1_length" aria-controls="DataTables_Table_1"
-                                      class="custom-select custom-select-sm form-control form-control-sm">
-                                      <option value="10">10</option>
-                                      <option value="25">25</option>
-                                      <option value="50">50</option>
-                                      <option value="100">100</option>
-                                    </select> entries</label></div>
+                        <button _ngcontent-cqd-c28="" type="button" (click)="unSelectAppelOffre()"
+                          class="btn btn-icon rounded-circle btn-outline-warning mr-1 mb-1 waves-effect waves-light"><i
+                            _ngcontent-cqd-c28="" class="fa fa-arrow-left"></i></button>
+                      </div>
+                      <div class="card-content">
+                        <div class="card-body card-dashboard">
+                          <div class="table-responsive">
+                            <div id="DataTables_Table_1_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                              <div class="row">
+                                <div class="col-sm-12 col-md-6">
+                                  <div class="dataTables_length" id="DataTables_Table_1_length"><label>Show <select
+                                        name="DataTables_Table_1_length" aria-controls="DataTables_Table_1"
+                                        class="custom-select custom-select-sm form-control form-control-sm">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                      </select> entries</label></div>
+                                </div>
+                                <div class="col-sm-12 col-md-6">
+                                  <div id="DataTables_Table_1_filter" class="dataTables_filter"><label>Search:<input
+                                        type="search" class="form-control form-control-sm" placeholder=""
+                                        aria-controls="DataTables_Table_1"></label></div>
+                                </div>
                               </div>
-                              <div class="col-sm-12 col-md-6">
-                                <div id="DataTables_Table_1_filter" class="dataTables_filter"><label>Search:<input
-                                      type="search" class="form-control form-control-sm" placeholder=""
-                                      aria-controls="DataTables_Table_1"></label></div>
+                              <div class="row">
+                                <div class="col-sm-12">
+                                  <table class="table row-grouping dataTable" id="DataTables_Table_1" role="grid"
+                                    aria-describedby="DataTables_Table_1_info" style="width: 100%;">
+                                    <thead>
+                                      <tr role="row">
+                                        <th></th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
+                                          colspan="1" aria-label="Name: activate to sort column ascending"
+                                          style="width: 324px;"></th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
+                                          colspan="1" aria-label="Position: activate to sort column ascending"
+                                          style="width: 408px;"></th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
+                                          colspan="1" aria-label="Age: activate to sort column ascending"
+                                          style="width: 130px;"></th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
+                                          colspan="1" aria-label="Start date: activate to sort column ascending"
+                                          style="width: 224px;"></th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
+                                          colspan="1" aria-label="Salary: activate to sort column ascending"
+                                          style="width: 192px;">Donner offre</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody *ngFor="let besoin of selectedAppelOffre.besoins">
+                                      <tr class="group">
+                                        <td colspan="6">ID Besoin :{{besoin.id}}</td>
+                                      </tr>
+                                      <tr *ngFor="let ordi of besoin.ordinateurs" role="row" class="odd">
+                                        <td>
+                                          <i class="feather icon-monitor text-primary font-medium-5"></i>
+                                        </td>
+                                        <td>CPU: {{ordi.cpu}}</td>
+                                        <td>RAM: {{ordi.ram}}</td>
+
+                                        <td>Disque dur: {{ordi.disqueDur}}</td>
+                                        <td>Ecran: {{ordi.ecran}}</td>
+                                        <td>
+                                          <button *ngIf="!isRessourceInRessourceFournisseur(ordi)" type="button"
+                                            (click)="selectRessource(ordi)" data-toggle="modal"
+                                            data-target="#offreModal"
+                                            class="btn btn-icon rounded-circle btn-outline-primary mr-1 mb-1 waves-effect waves-light"><i
+                                              class="fa fa-plus-circle"></i></button>
+                                          <button *ngIf="isRessourceInRessourceFournisseur(ordi)" type="button"
+                                            (click)="handleRemoveFromRessourceFournisseur(ordi)"
+                                            class="btn btn-icon rounded-circle btn-outline-danger mr-1 mb-1 waves-effect waves-light"><i
+                                              class="fa fa-times-circle"></i></button>
+
+                                        </td>
+                                      </tr>
+                                      <tr *ngFor="let impri of besoin.imprimantes" role="row" class="odd">
+                                        <td>
+                                          <i class="feather icon-printer text-primary font-medium-5"></i>
+                                        </td>
+                                        <td>Resolution: {{impri.resolution}}</td>
+                                        <td>Vitesse d(impression): {{impri.vitesseImpression}}</td>
+
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                          <button type="button" *ngIf="!isRessourceInRessourceFournisseur(impri)"
+                                            (click)="selectRessource(impri)" data-toggle="modal"
+                                            data-target="#offreModal"
+                                            class="btn btn-icon rounded-circle btn-outline-primary mr-1 mb-1 waves-effect waves-light"><i
+                                              class="fa fa-plus-circle"></i></button>
+                                          <button *ngIf="isRessourceInRessourceFournisseur(impri)" type="button"
+                                            (click)="handleRemoveFromRessourceFournisseur(impri)"
+                                            class="btn btn-icon rounded-circle btn-outline-danger mr-1 mb-1 waves-effect waves-light"><i
+                                              class="fa fa-times-circle"></i></button>
+
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                    <tfoot>
+                                      <tr>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1">Donner offre</th>
+                                      </tr>
+                                    </tfoot>
+                                  </table>
+                                </div>
                               </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-sm-12">
-                                <table class="table row-grouping dataTable" id="DataTables_Table_1" role="grid"
-                                  aria-describedby="DataTables_Table_1_info" style="width: 100%;">
-                                  <thead>
-                                    <tr role="row">
-                                      <th></th>
-                                      <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
-                                        colspan="1" aria-label="Name: activate to sort column ascending"
-                                        style="width: 324px;"></th>
-                                      <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
-                                        colspan="1" aria-label="Position: activate to sort column ascending"
-                                        style="width: 408px;"></th>
-                                      <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
-                                        colspan="1" aria-label="Age: activate to sort column ascending"
-                                        style="width: 130px;"></th>
-                                      <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
-                                        colspan="1" aria-label="Start date: activate to sort column ascending"
-                                        style="width: 224px;"></th>
-                                      <th class="sorting" tabindex="0" aria-controls="DataTables_Table_1" rowspan="1"
-                                        colspan="1" aria-label="Salary: activate to sort column ascending"
-                                        style="width: 192px;">Donner offre</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody *ngFor="let besoin of selectedAppelOffre.besoins">
-                                    <tr class="group">
-                                      <td colspan="6">ID Besoin :{{besoin.id}}</td>
-                                    </tr>
-                                    <tr *ngFor="let ordi of besoin.ordinateurs" role="row" class="odd">
-                                      <td>
-                                        <i class="feather icon-monitor text-primary font-medium-5"></i>
-                                      </td>
-                                      <td>CPU: {{ordi.cpu}}</td>
-                                      <td>RAM: {{ordi.ram}}</td>
-
-                                      <td>Disque dur: {{ordi.disqueDur}}</td>
-                                      <td>Ecran: {{ordi.ecran}}</td>
-                                      <td>
-                                        <button *ngIf="!isRessourceInRessourceFournisseur(ordi)" type="button"
-                                          (click)="selectRessource(ordi)" data-toggle="modal" data-target="#offreModal"
-                                          class="btn btn-icon rounded-circle btn-outline-primary mr-1 mb-1 waves-effect waves-light"><i
-                                            class="fa fa-plus-circle"></i></button>
-                                        <button *ngIf="isRessourceInRessourceFournisseur(ordi)" type="button"
-                                          (click)="handleRemoveFromRessourceFournisseur(ordi)"
-                                          class="btn btn-icon rounded-circle btn-outline-danger mr-1 mb-1 waves-effect waves-light"><i
-                                            class="fa fa-times-circle"></i></button>
-
-                                      </td>
-                                    </tr>
-                                    <tr *ngFor="let impri of besoin.imprimantes" role="row" class="odd">
-                                      <td>
-                                        <i class="feather icon-printer text-primary font-medium-5"></i>
-                                      </td>
-                                      <td>Resolution: {{impri.resolution}}</td>
-                                      <td>Vitesse d(impression): {{impri.vitesseImpression}}</td>
-
-                                      <td></td>
-                                      <td></td>
-                                      <td>
-                                        <button type="button" *ngIf="!isRessourceInRessourceFournisseur(impri)"
-                                          (click)="selectRessource(impri)" data-toggle="modal" data-target="#offreModal"
-                                          class="btn btn-icon rounded-circle btn-outline-primary mr-1 mb-1 waves-effect waves-light"><i
-                                            class="fa fa-plus-circle"></i></button>
-                                        <button *ngIf="isRessourceInRessourceFournisseur(impri)" type="button"
-                                          (click)="handleRemoveFromRessourceFournisseur(impri)"
-                                          class="btn btn-icon rounded-circle btn-outline-danger mr-1 mb-1 waves-effect waves-light"><i
-                                            class="fa fa-times-circle"></i></button>
-
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                  <tfoot>
-                                    <tr>
-                                      <th rowspan="1" colspan="1"></th>
-                                      <th rowspan="1" colspan="1"></th>
-                                      <th rowspan="1" colspan="1"></th>
-                                      <th rowspan="1" colspan="1"></th>
-                                      <th rowspan="1" colspan="1">Donner offre</th>
-                                    </tr>
-                                  </tfoot>
-                                </table>
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-sm-12 col-md-5">
-                                <div class="dataTables_info" id="DataTables_Table_1_info" role="status"
-                                  aria-live="polite">Showing 1 to 10 of 10 entries</div>
-                              </div>
-                              <div class="col-sm-12 col-md-7">
-                                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Table_1_paginate">
-                                  <ul class="pagination">
-                                    <li class="paginate_button page-item previous disabled"
-                                      id="DataTables_Table_1_previous"><a href="#" aria-controls="DataTables_Table_1"
-                                        data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
-                                    <li class="paginate_button page-item active"><a href="#"
-                                        aria-controls="DataTables_Table_1" data-dt-idx="1" tabindex="0"
-                                        class="page-link">1</a></li>
-                                    <li class="paginate_button page-item next disabled" id="DataTables_Table_1_next"><a
-                                        href="#" aria-controls="DataTables_Table_1" data-dt-idx="2" tabindex="0"
-                                        class="page-link">Next</a></li>
-                                  </ul>
+                              <div class="row">
+                                <div class="col-sm-12 col-md-5">
+                                  <div class="dataTables_info" id="DataTables_Table_1_info" role="status"
+                                    aria-live="polite">Showing 1 to 10 of 10 entries</div>
+                                </div>
+                                <div class="col-sm-12 col-md-7">
+                                  <div class="dataTables_paginate paging_simple_numbers"
+                                    id="DataTables_Table_1_paginate">
+                                    <ul class="pagination">
+                                      <li class="paginate_button page-item previous disabled"
+                                        id="DataTables_Table_1_previous"><a href="#" aria-controls="DataTables_Table_1"
+                                          data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
+                                      <li class="paginate_button page-item active"><a href="#"
+                                          aria-controls="DataTables_Table_1" data-dt-idx="1" tabindex="0"
+                                          class="page-link">1</a></li>
+                                      <li class="paginate_button page-item next disabled" id="DataTables_Table_1_next">
+                                        <a href="#" aria-controls="DataTables_Table_1" data-dt-idx="2" tabindex="0"
+                                          class="page-link">Next</a></li>
+                                    </ul>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -239,216 +243,217 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
 
+            </div>
           </div>
-        </div>
-      </section>
-      <!-- Column selectors with Export Options and print table -->
+        </section>
+        <!-- Column selectors with Export Options and print table -->
+      </div>
     </div>
   </div>
-</div>
-<div class="sidenav-overlay"></div>
-<div class="drag-target"></div>
+  <div class="sidenav-overlay"></div>
+  <div class="drag-target"></div>
 
 
-<!-- Modals -->
-<div class="modal fade text-left" id="offreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel122"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-primary white">
-        <h5 class="modal-title" >Ajouter un offre pour cette ressource</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="card-body">
-          <form class="form form-horizontal" #offreForm="ngForm">
-            <div class="form-body">
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-group row">
-                    <div class="col-md-4">
-                      <span>Marque</span>
-                    </div>
-                    <div class="col-md-8">
-                      <div class="position-relative has-icon-left">
-                        <input type="text" id="marque" ngModel class="form-control" name="marque"
-                          placeholder="Apple : LG ...">
-                        <div class="form-control-position">
-                          <i class="fa fa-modx"></i>
+  <!-- Modals -->
+  <div class="modal fade text-left" id="offreModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel122"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-primary white">
+          <h5 class="modal-title">Ajouter un offre pour cette ressource</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card-body">
+            <form class="form form-horizontal" #offreForm="ngForm">
+              <div class="form-body">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <span>Marque</span>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="position-relative has-icon-left">
+                          <input type="text" id="marque" ngModel class="form-control" name="marque"
+                            placeholder="Apple : LG ...">
+                          <div class="form-control-position">
+                            <i class="fa fa-modx"></i>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-12">
-                  <div class="form-group row">
-                    <div class="col-md-4">
-                      <span>Prix</span>
-                    </div>
-                    <div class="col-md-8">
-                      <div class="position-relative has-icon-left">
-                        <input type="number"  ngModel class="form-control" name="prix" placeholder="">
-                        <div class="form-control-position">
-                          <i class="fa fa-eur"></i>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <span>Prix</span>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="position-relative has-icon-left">
+                          <input type="number" ngModel class="form-control" name="prix" placeholder="">
+                          <div class="form-control-position">
+                            <i class="fa fa-eur"></i>
+                          </div>
                         </div>
                       </div>
+
+                      <input type="text" hidden name="idRessource" ngModel="{{selectedRessource?.id}}">
                     </div>
-
-                    <input type="text" hidden name="idRessource" ngModel="{{selectedRessource?.id}}">
                   </div>
-                </div>
 
 
-                <div class="col-md-8 offset-md-4">
-                  <button type="submit" (click)="handleAddRessourceFournisseur(offreForm)" data-dismiss="modal"
-                    class="btn btn-primary mr-1 mb-1 waves-effect waves-light">Ajouter</button>
-                  <button type="reset" data-dismiss="modal"
-                    class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light">Annuler</button>
+                  <div class="col-md-8 offset-md-4">
+                    <button type="submit" (click)="handleAddRessourceFournisseur(offreForm)" data-dismiss="modal"
+                      class="btn btn-primary mr-1 mb-1 waves-effect waves-light">Ajouter</button>
+                    <button type="reset" data-dismiss="modal"
+                      class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light">Annuler</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-      </div>
-      <!-- <div class="modal-footer">
+        <!-- <div class="modal-footer">
         <button type="button" class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal"
           >Confirmer</button>
         <button type="button" class="btn btn-light waves-effect waves-light mr-1" data-dismiss="modal">Annuler</button>
       </div> -->
+      </div>
     </div>
   </div>
-</div>
 
-<div class="modal fade text-left" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel122"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-primary white">
-        <h5 class="modal-title" >Précisez les dates pour votre offre</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="card-body">
-          <form class="form form-horizontal" #dateForm="ngForm">
-            <div class="form-body">
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-group row">
-                    <div class="col-md-4">
-                      <span>Date debut:</span>
-                    </div>
-                    <div class="col-md-8">
-                      <div class="position-relative has-icon-left">
-                        <input type="date" id="dateDebut" ngModel class="form-control" name="dateDebut" placeholder="">
-                        <div class="form-control-position">
-                          <i class="fa fa-calendar"></i>
+  <div class="modal fade text-left" id="dateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel122"
+    style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-primary white">
+          <h5 class="modal-title">Précisez les dates pour votre offre</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="card-body">
+            <form class="form form-horizontal" #dateForm="ngForm">
+              <div class="form-body">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <span>Date debut:</span>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="position-relative has-icon-left">
+                          <input type="date" id="dateDebut" ngModel class="form-control" name="dateDebut"
+                            placeholder="">
+                          <div class="form-control-position">
+                            <i class="fa fa-calendar"></i>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-12">
-                  <div class="form-group row">
-                    <div class="col-md-4">
-                      <span>Date fin:</span>
-                    </div>
-                    <div class="col-md-8">
-                      <div class="position-relative has-icon-left">
-                        <input type="date"  ngModel class="form-control" name="dateFin" placeholder="">
-                        <div class="form-control-position">
-                          <i class="fa fa-calendar"></i>
+                  <div class="col-12">
+                    <div class="form-group row">
+                      <div class="col-md-4">
+                        <span>Date fin:</span>
+                      </div>
+                      <div class="col-md-8">
+                        <div class="position-relative has-icon-left">
+                          <input type="date" ngModel class="form-control" name="dateFin" placeholder="">
+                          <div class="form-control-position">
+                            <i class="fa fa-calendar"></i>
+                          </div>
                         </div>
                       </div>
+
                     </div>
-
                   </div>
-                </div>
 
 
-                <div class="col-md-8 offset-md-4">
-                  <button type="submit" (click)="handleEnvoyerOffre(dateForm)" data-dismiss="modal"
-                    class="btn btn-primary mr-1 mb-1 waves-effect waves-light">Envoyer</button>
-                  <button type="reset" data-dismiss="modal"
-                    class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light">Annuler</button>
+                  <div class="col-md-8 offset-md-4">
+                    <button type="submit" (click)="handleEnvoyerOffre(dateForm)" data-dismiss="modal"
+                      class="btn btn-primary mr-1 mb-1 waves-effect waves-light">Envoyer</button>
+                    <button type="reset" data-dismiss="modal"
+                      class="btn btn-outline-warning mr-1 mb-1 waves-effect waves-light">Annuler</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-      </div>
-      <!-- <div class="modal-footer">
+        <!-- <div class="modal-footer">
         <button type="button" class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal"
           >Confirmer</button>
         <button type="button" class="btn btn-light waves-effect waves-light mr-1" data-dismiss="modal">Annuler</button>
       </div> -->
+      </div>
     </div>
   </div>
-</div>
 
 
-<div class="modal fade " id="offresModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter"
-  style="display: none" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle">Offre</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-
-      <div class="modal-body">
-        <div class="list-group" id="list-tab" role="tablist">
-          <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" role="tab"
-            aria-controls="list-home">ID: {{ getOffreOfFournisseur(selectedSentAppelOffre)?.id }}</a>
-          <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" role="tab"
-            aria-controls="list-profile">Date de debut :
-            {{ getOffreOfFournisseur(selectedSentAppelOffre)?.dateDebut | date }}</a>
-          <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" role="tab"
-            aria-controls="list-messages">Date fin: {{ getOffreOfFournisseur(selectedSentAppelOffre)?.dateFin | date
-            }}</a>
-          <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" role="tab"
-            aria-controls="list-settings">ID fournisseur : {{
-            getOffreOfFournisseur(selectedSentAppelOffre)?.idFournisseur }}</a>
+  <div class="modal fade " id="offresModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter"
+    style="display: none" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Offre</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
         </div>
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">Ressources</h4>
+
+        <div class="modal-body">
+          <div class="list-group" id="list-tab" role="tablist">
+            <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" role="tab"
+              aria-controls="list-home">ID: {{ getOffreOfFournisseur(selectedSentAppelOffre)?.id }}</a>
+            <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" role="tab"
+              aria-controls="list-profile">Date de debut :
+              {{ getOffreOfFournisseur(selectedSentAppelOffre)?.dateDebut | date }}</a>
+            <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" role="tab"
+              aria-controls="list-messages">Date fin: {{ getOffreOfFournisseur(selectedSentAppelOffre)?.dateFin | date
+              }}</a>
+            <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" role="tab"
+              aria-controls="list-settings">ID fournisseur : {{
+              getOffreOfFournisseur(selectedSentAppelOffre)?.idFournisseur }}</a>
           </div>
-          <div class="card-content">
-            <div class="card-body">
-              <div class="default-collapse collapse-bordered">
-                <div class="card collapse-header">
-                  <div id="headingCollapse1" class="card-header" data-toggle="collapse" role="button"
-                    data-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
-                    <span class="lead collapse-title">
-                      {{getOffreOfFournisseur(selectedSentAppelOffre)?.ressources?.length}} Ressources proposées
-                    </span>
-                    <i class="feather icon-monitor text-primary font-medium-5"></i>
-                  </div>
-                  <div id="collapse1" role="tabpanel" aria-labelledby="headingCollapse1" class="collapse">
-                    <div class="card-content">
-                      <div class="card-body">
-                        <ul class="activity-timeline timeline-left list-unstyled">
-                          <li *ngFor="let r of getOffreOfFournisseur(selectedSentAppelOffre)?.ressources">
-                            <div class="timeline-icon bg-primary">
-                              <i class="feather icon-monitor font-medium-2"></i>
-                            </div>
-                            <div class="timeline-info">
-                              <p class="list-group-item">ID: {{r.id}} </p>
-                              <p class="list-group-item">Marque: {{r.marque}}</p>
-                              <p class="list-group-item">Prix Dur: {{r.prix}}</p>
-                              <p class="list-group-item">ID ressource concernée: {{r.idRessource}}</p>
-                            </div>
-                          </li>
-                        </ul>
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">Ressources</h4>
+            </div>
+            <div class="card-content">
+              <div class="card-body">
+                <div class="default-collapse collapse-bordered">
+                  <div class="card collapse-header">
+                    <div id="headingCollapse1" class="card-header" data-toggle="collapse" role="button"
+                      data-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
+                      <span class="lead collapse-title">
+                        {{getOffreOfFournisseur(selectedSentAppelOffre)?.ressources?.length}} Ressources proposées
+                      </span>
+                      <i class="feather icon-monitor text-primary font-medium-5"></i>
+                    </div>
+                    <div id="collapse1" role="tabpanel" aria-labelledby="headingCollapse1" class="collapse">
+                      <div class="card-content">
+                        <div class="card-body">
+                          <ul class="activity-timeline timeline-left list-unstyled">
+                            <li *ngFor="let r of getOffreOfFournisseur(selectedSentAppelOffre)?.ressources">
+                              <div class="timeline-icon bg-primary">
+                                <i class="feather icon-monitor font-medium-2"></i>
+                              </div>
+                              <div class="timeline-info">
+                                <p class="list-group-item">ID: {{r.id}} </p>
+                                <p class="list-group-item">Marque: {{r.marque}}</p>
+                                <p class="list-group-item">Prix Dur: {{r.prix}}</p>
+                                <p class="list-group-item">ID ressource concernée: {{r.idRessource}}</p>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -460,5 +465,4 @@
       </div>
     </div>
   </div>
-</div>
 </div>

@@ -1,5 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  map,
+  of,
+  startWith,
+} from 'rxjs';
 import { Besoin, Departement } from 'src/app/interface/Classes';
+import { DefaultState } from 'src/app/interface/appstate';
+import { DataState } from 'src/app/interface/datastate';
 import { EventTypes } from 'src/app/interface/event-type';
 import { GestionBesoinsService } from 'src/app/services/gestion-besoins.service';
 import { GestionDepartementsService } from 'src/app/services/gestion-departements.service';
@@ -9,52 +19,37 @@ declare var $: any;
 @Component({
   selector: 'app-liste-besoin',
   templateUrl: './liste-besoin.component.html',
-  styleUrls: ['./liste-besoin.component.css']
+  styleUrls: ['./liste-besoin.component.css'],
 })
 export class ListeBesoinComponent implements OnInit {
-
-  public listeBesoinsByDepartement: Besoin[] = [];
-  public departements: Departement[] = [];
   public selectedBesoin!: Besoin | undefined;
-  userId!: string;
-  idDepartement!: number;
-  public constructor(private gestionBesoinsService: GestionBesoinsService,
+  besoinState$: Observable<DefaultState<Besoin[]>> | null = null;
+  departements$: Observable<Departement[]> | null = null;
+  besoinsSubject = new BehaviorSubject<Besoin[]>([]);
+  public constructor(
+    private gestionBesoinsService: GestionBesoinsService,
     private gestionDepartementsService: GestionDepartementsService,
-    private toastService: ToastService) { }
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    this.getBesoinsByDepartement();
-    this.getDepartements();
-    this.userId = localStorage.getItem('userId')!;
-    this.idDepartement = Number(localStorage.getItem("departementId"));
+    this.departements$ = this.gestionDepartementsService.getAllDepartements();
 
-  }
-
-  public getBesoinsByDepartement() {
-    let idDepartement = Number(localStorage.getItem("departementId"));
-    this.gestionBesoinsService.getBesoinsByIdDepartement(idDepartement).subscribe({
-      next: (data) => {
-        console.log(data);
-        this.listeBesoinsByDepartement = data.reverse();
-      },
-      error: (error) => console.log(error)
-    })
-  }
-
-  public getDepartements(): void {
-    this.gestionDepartementsService.getAllDepartements().subscribe({
-      next: (data: Departement[]) => {
-        this.departements = data;
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    })
-  }
-
-  public getDepartementName(idDepartement: number): string | undefined {
-    const departement = this.departements.find(dep => dep.id === idDepartement);
-    return departement?.nomDepartement;
+    this.besoinState$ = this.gestionBesoinsService
+      .getBesoinsByIdDepartement()
+      .pipe(
+        map((besoins) => {
+          this.besoinsSubject.next(besoins);
+          return { state: DataState.LOADED, data: besoins };
+        }),
+        startWith({ state: DataState.LOADING }),
+        catchError((error) =>
+          of({
+            state: DataState.ERROR,
+            error,
+          })
+        )
+      );
   }
 
   public showRessourcesBesoin(besoin: Besoin) {
@@ -62,21 +57,22 @@ export class ListeBesoinComponent implements OnInit {
   }
 
   public sendBesoinsRequest() {
-    let idDepartement = Number(localStorage.getItem("departementId"));
-    this.gestionBesoinsService.sendBesoinsRequest(idDepartement).subscribe({
-      next: () => {
-        this.toastService.showSuccessToast(EventTypes.Success, "Demande Besoins a été envoyé");
-      },
-      error: (error) => console.log(error)
-    })
+    this.besoinState$ = this.gestionBesoinsService.sendBesoinsRequest().pipe(
+      map(() => {
+        this.toastService.showSuccessToast(
+          EventTypes.Success,
+          'Demande Besoins a été envoyé'
+        );
+        return { state: DataState.LOADED, data: this.besoinsSubject.value };
+      }),
+      startWith({ state: DataState.LOADING, data: this.besoinsSubject.value }),
+      catchError((error) =>
+        of({
+          state: DataState.ERROR,
+          data: this.besoinsSubject.value,
+          error,
+        })
+      )
+    );
   }
-
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      $(document).ready(function () {
-        $('#listeBesoinTable').DataTable();
-      });
-    }, 500);
-  }
-
 }

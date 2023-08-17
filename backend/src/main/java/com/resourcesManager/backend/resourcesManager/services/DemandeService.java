@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DemandeService {
 
-    void createDemande(Long idDepartement);
+    void createDemande(String userId);
 
 
     Demande demandeSeen(Long id);

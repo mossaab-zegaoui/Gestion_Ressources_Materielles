@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -34,6 +34,7 @@ import { HomeComponent } from './components/Home/home/home.component';
 import { ResetPasswordComponent } from './components/auth/reset-password/reset-password.component';
 import { UpdatePasswordComponent } from './components/auth/update-password/update-password.component';
 import { ConfirmRegistrationComponent } from './components/auth/confirm-registration/confirm-registration.component';
+import { DepartementNomPipe } from './pipes/departement-nom.pipe';
 
 @NgModule({
   declarations: [
@@ -65,23 +66,23 @@ import { ConfirmRegistrationComponent } from './components/auth/confirm-registra
     HomeComponent,
     ResetPasswordComponent,
     UpdatePasswordComponent,
-    ConfirmRegistrationComponent
+    ConfirmRegistrationComponent,
+    DepartementNomPipe,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
-
+    ReactiveFormsModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,14 +1,15 @@
 package com.resourcesManager.backend.resourcesManager.services;
 
 import com.resourcesManager.backend.resourcesManager.model.Besoin;
+import com.resourcesManager.backend.resourcesManager.model.User;
 
 import java.util.List;
 
 public interface BesoinService {
 
-    Besoin saveBesoin(Besoin besoin);
+    Besoin saveBesoin(Besoin besoin, String userId);
     List<Besoin> getAllBesoins();
-    List<Besoin> getBesoinsByDepartement(Long id);
+    List<Besoin> getBesoinsByDepartement(String id);
     List<Besoin> getBesoinsByMembreDepartement(String id);
     void deleteBesoinOfMembre(String id);
     void deleteBesoin(Long id);

@@ -22,19 +22,8 @@
             </div>
           </div>
         </div>
-        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
-          <div class="form-group breadcrum-right">
-            <div class="dropdown">
-              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                  class="feather icon-settings"></i></button>
-              <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
-                  class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
-            </div>
-          </div>
-        </div>
       </div>
-      <div class="content-body">
+      <div class="content-body" *ngIf="besoinState$ | async">
         <div class="row">
           <div class="col-12">
             <p>Vous pouvez gérer les departements de votre etablissement via cette page</p>
@@ -45,12 +34,7 @@
           <div class="col-3"><button class="btn btn-outline-primary" (click)="openAddBesoin = true"><span><i
                   class="feather icon-plus"></i> Ajouter besoin</span></button></div>
           <div class="col-2"><button type="button" class="btn btn-primary waves-effect waves-light" data-toggle="modal"
-              data-target="#confirmBesoins"><i class="feather icon-save"></i> Sauvgarder</button></div>
-        </div>
-        <div class="custom-control custom-checkbox mb-1" *ngIf="hasRole(['CHEF_DEP'])">
-          <input type="checkbox" class="custom-control-input" (click)="onCheckboxChange()" name="isForDepartement"
-            id="forDepartement">
-          <label class="custom-control-label" for="forDepartement">Pour tout le departement</label>
+              data-target="#confirmBesoins"><i class="feather icon-save"></i> Save</button></div>
         </div>
         <div class="row" *ngIf="openAddBesoin">
           <div class="col-md-12">
@@ -60,13 +44,14 @@
               </div>
               <div class="card-content">
                 <div class="card-body">
-                  <form class="form-horizontal" #ressourceToAdd="ngForm">
+                  <form class="form-horizontal" #ressourceToAdd="ngForm"
+                    (ngSubmit)="handleAddRessourceToBesoin(ressourceToAdd)">
                     <div class="row">
                       <div class="col-sm-6">
                         <div class="form-group">
                           <div class="form-label-group">
                             Type de ressource
-                            <select [value]="typeBesoinToAdd" (change)="chooseRessource($event)" class="form-control"
+                            <select [value]="type" (change)="chooseRessource($event)" class="form-control"
                               id="typeDeRess">
                               <option value="" selected>Choose...</option>
                               <option value="Ordinateur">Ordinateur</option>
@@ -76,31 +61,28 @@
                         </div>
                       </div>
                     </div>
-                    <div class="row" id="forTypeOrdinateur" *ngIf="typeBesoinToAdd == 'Ordinateur'">
+                    <div class="row" id="forTypeOrdinateur" *ngIf="type == 'Ordinateur'">
                       <div class="col-sm-6">
                         <div class="form-group">
                           CPU
-                          <!-- <input type="text" ngModel name="cpu" class="form-control" placeholder="CPU" required=""> -->
                           <select ngModel="choose" name="cpu" class="form-control">
                             <option selected value="choose">Choose...</option>
-                            <option *ngFor="let c of cpu" value="{{ c }}">{{ c }}</option>
+                            <option *ngFor="let cpu of cpus" value="{{ cpu }}">{{ cpu }}</option>
                           </select>
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
                           RAM
-                          <!-- <input type="text" ngModel name="ram" class="form-control" placeholder="RAM" required=""> -->
                           <select ngModel="choose" name="ram" class="form-control">
                             <option selected value="choose">Choose...</option>
-                            <option *ngFor="let r of ram" value="{{ r }}">{{ r }}</option>
+                            <option *ngFor="let ram of rams" value="{{ ram }}">{{ ram }}</option>
                           </select>
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
                           Ecran
-                          <!-- <input type="text" ngModel name="ecran" class="form-control" placeholder="Ecran" required="" data-validation-match-match="password"> -->
                           <select ngModel="choose" name="ecran" class="form-control">
                             <option selected value="choose">Choose...</option>
                             <option *ngFor="let e of ecran" value="{{ e }}">{{ e }}</option>
@@ -110,29 +92,27 @@
                       <div class="col-sm-6">
                         <div class="form-group">
                           Disque Dur
-                          <!-- <input type="text" ngModel name="disquedur" class="form-control" placeholder="Ecran" required=""> -->
-                          <select ngModel="choose" name="disquedur" class="form-control">
+                          <select ngModel="choose" name="disqueDur" class="form-control">
                             <option selected value="choose">Choose...</option>
-                            <option *ngFor="let d of disque" value="{{ d }}">{{ d }}</option>
+                            <option *ngFor="let disque of disques" value="{{ disque }}">{{ disque }}</option>
                           </select>
                         </div>
                       </div>
                     </div>
-                    <div class="row" id="forTypeImprimante" *ngIf="typeBesoinToAdd == 'Imprimante'">
+                    <div class="row" id="forTypeImprimante" *ngIf="type == 'Imprimante'">
                       <div class="col-sm-6">
                         <div class="form-group">
                           Resolution
-                          <!-- <input type="text" ngModel name="resolution" class="form-control" placeholder="Resolution" required=""> -->
                           <select ngModel="choose" name="resolution" class="form-control">
                             <option selected value="choose">Choose...</option>
-                            <option *ngFor="let r of resolutionimp" value="{{ r }}">{{ r }}</option>
+                            <option *ngFor="let resolution of resolutionimp" value="{{ resolution }}">{{ resolution }}
+                            </option>
                           </select>
                         </div>
                       </div>
                       <div class="col-sm-6">
                         <div class="form-group">
                           Vitesse Impression
-                          <!-- <input type="text" ngModel name="vitesseimpression" class="form-control" placeholder="Vitesse Impression" required=""> -->
                           <select ngModel="choose" name="vitesseimpression" class="form-control">
                             <option selected value="choose">Choose...</option>
                             <option *ngFor="let v of vitesseimp" value="{{ v }}">{{ v }}</option>
@@ -140,8 +120,7 @@
                         </div>
                       </div>
                     </div>
-                    <button type="submit" (click)="handleAddRessourceToBesoin(ressourceToAdd)"
-                      class="btn btn-primary waves-effect waves-light mr-1">Ajouter</button>
+                    <button type="submit" class="btn btn-primary waves-effect waves-light mr-1">Ajouter</button>
                     <button class="btn btn-light waves-effect waves-light mr-1"
                       (click)="handleCloseAddBesoin()">Fermer</button>
                   </form>
@@ -151,7 +130,7 @@
           </div>
         </div>
         <!-- Column selectors with Export Options and print table -->
-        <section id="statistics-card">
+        <section id="statistics-card" *ngIf="besoin$ | async as result">
           <div class="row">
             <section id="anchors-n-buttons container" style="width: 100%;">
               <div class="row match-height">
@@ -163,7 +142,7 @@
                           <button type="button" class="list-group-item list-group-item-action active">
                             Ordinateurs
                           </button>
-                          <div class="card border-bottom" *ngFor="let ord of ordinateursBesoin">
+                          <div class="card border-bottom" *ngFor="let ord of result.ordinateurs">
                             <div class="card-header d-flex align-items-start pb-0">
                               <div class="row" style="width: 100%;">
                                 <div class="avatar-content col-1">
@@ -193,7 +172,7 @@
                           <button type="button" class="list-group-item list-group-item-action active">
                             Imprimantes
                           </button>
-                          <div class="card border-bottom" *ngFor="let imp of imprimantesBesoin">
+                          <div class="card border-bottom" *ngFor="let imp of result.imprimantes">
                             <div class="card-header d-flex align-items-start pb-0">
                               <div class="row" style="width: 100%;">
                                 <div class="avatar-content col-1">

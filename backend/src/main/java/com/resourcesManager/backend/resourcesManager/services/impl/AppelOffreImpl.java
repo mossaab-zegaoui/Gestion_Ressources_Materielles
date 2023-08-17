@@ -41,7 +41,7 @@ public class AppelOffreImpl implements AppelOffreService {
         Optional.ofNullable(appelOffre.getBesoins())
                 .stream()
                 .flatMap(Collection::stream)
-                .peek(b -> b.setIsBesoinInAppelOffre(true))
+                .peek(b -> b.setBesoinInAppelOffre(true))
                 .forEach(besoinRepository::save);
         appelOffre.setDatePub(Date.valueOf(LocalDate.now()));
         appelOffreRepository.save(appelOffre);
@@ -54,7 +54,7 @@ public class AppelOffreImpl implements AppelOffreService {
 
         appelOffre.getBesoins()
                 .stream()
-                .peek(besoin -> besoin.setIsBesoinInAppelOffre(false))
+                .peek(besoin -> besoin.setBesoinInAppelOffre(false))
                 .forEach(besoinRepository::save);
 
         appelOffreRepository.deleteById(id);

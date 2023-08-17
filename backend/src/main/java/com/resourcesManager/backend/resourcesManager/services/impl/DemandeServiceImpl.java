@@ -1,11 +1,11 @@
 package com.resourcesManager.backend.resourcesManager.services.impl;
 
 import com.resourcesManager.backend.resourcesManager.model.Demande;
-import com.resourcesManager.backend.resourcesManager.model.Departement;
 import com.resourcesManager.backend.resourcesManager.model.MembreDepartement;
 import com.resourcesManager.backend.resourcesManager.exceptions.NotFoundException;
 import com.resourcesManager.backend.resourcesManager.repository.DemandeRepository;
 import com.resourcesManager.backend.resourcesManager.repository.DepartementRepository;
+import com.resourcesManager.backend.resourcesManager.repository.MembreDepartementRepository;
 import com.resourcesManager.backend.resourcesManager.services.DemandeService;
 import com.resourcesManager.backend.resourcesManager.services.MembreDepartementService;
 import lombok.AllArgsConstructor;
@@ -21,25 +21,34 @@ import java.util.stream.Collectors;
 public class DemandeServiceImpl implements DemandeService {
 
     private final DemandeRepository demandeRepository;
-    private final DepartementRepository departementRepository;
+    private final MembreDepartementRepository membreDepartementRepository;
     private final MembreDepartementService membreDepartementService;
 
     @Override
-    public void createDemande(Long idDepartement) {
+    public void createDemande(String userId) {
+        MembreDepartement chefDepartement = membreDepartementRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Membre departement not found"));
+        Long idDepartement = chefDepartement.getDepartement().getId();
+
         List<MembreDepartement> membresDepartement = membreDepartementService.getMembresByIdDepartement(idDepartement);
-        membresDepartement.removeIf(membre -> membre.getRoles().stream().anyMatch(r -> r.getNomRole().equals("CHEF_DEP")));
+
         List<Demande> demandes = membresDepartement.stream()
-                .map(membre -> Demande.builder()
-                        .message("Envoyez vos besoins")
-                        .dateDemande(Date.valueOf(LocalDate.now()))
-                        .idDepartement(idDepartement)
-                        .idMembreDepartement(membre.getId())
-                        .isSeen(false)
-                        .build())
+                .filter(membreDepartement -> !membreDepartement.getId().equals(userId))
+                .map(membre -> createDemandeObject(membre.getId(), idDepartement))
                 .collect(Collectors.toList());
+
         demandeRepository.saveAll(demandes);
     }
 
+    private Demande createDemandeObject(String membreId, Long idDepartement) {
+        return Demande.builder()
+                .message("Envoyez vos besoins")
+                .dateDemande(Date.valueOf(LocalDate.now()))
+                .idDepartement(idDepartement)
+                .idMembreDepartement(membreId)
+                .isSeen(false)
+                .build();
+    }
 
 
     @Override

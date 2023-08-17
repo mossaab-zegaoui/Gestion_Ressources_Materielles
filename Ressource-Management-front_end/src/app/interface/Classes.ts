@@ -1,5 +1,5 @@
 export interface Departement {
-  id: number | null;
+  id?: number | null;
   nomDepartement: string;
   membreDepartements?: MembreDepartement[] | null;
 }
@@ -51,15 +51,16 @@ export interface Imprimante extends Ressource {
 }
 
 export interface Besoin {
-  id: number | null;
-  dateDemande: string;
-  dateAffectation: string | null;
-  isAffected: boolean;
+  id?: number | null;
+  dateDemande?: string;
+  dateAffectation?: string | null;
+  isAffected?: boolean;
   idMembreDepartement?: string;
-  idDepartement: number;
-  isBesoinInAppelOffre: boolean;
-  ordinateurs: Ordinateur[];
-  imprimantes: Imprimante[];
+  idDepartement?: number;
+  nomDepartement?:string;
+  isBesoinInAppelOffre?: boolean;
+  ordinateurs?: Ordinateur[];
+  imprimantes?: Imprimante[];
   isSelected?: boolean;
 }
 

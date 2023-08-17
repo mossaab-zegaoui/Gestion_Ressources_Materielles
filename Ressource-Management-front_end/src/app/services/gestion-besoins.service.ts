@@ -17,16 +17,16 @@ export class GestionBesoinsService {
     return this.http.post<Besoin>(`${this.apiServerUrl}/besoins`, besoin);
   }
 
-  public getBesoinsByIdDepartement(idDepartement: number): Observable<Besoin[]> {
-    return this.http.get<Besoin[]>(`${this.apiServerUrl}/besoins/departement/${idDepartement}`);
+  public getBesoinsByIdDepartement(): Observable<Besoin[]> {
+    return this.http.get<Besoin[]>(`${this.apiServerUrl}/besoins/departement`);
   }
 
   public getBesoinsNotInAppelOffre(): Observable<Besoin[]> {
     return this.http.get<Besoin[]>(`${this.apiServerUrl}/besoins/NotInAppelOffre`);
   }
 
-  public sendBesoinsRequest(idDepartement: number): Observable<void> {
-    return this.http.post<void>(`${this.apiServerUrl}/demandes/departements/${idDepartement}`, null);
+  public sendBesoinsRequest(): Observable<void> {
+    return this.http.post<void>(`${this.apiServerUrl}/demandes/departements`, null);
   }
 
   public getDemandesByIdMembre(idMembre: string): Observable<Demande[]> {

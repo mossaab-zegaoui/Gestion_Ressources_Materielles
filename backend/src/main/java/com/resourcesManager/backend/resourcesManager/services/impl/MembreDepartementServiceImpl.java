@@ -5,6 +5,7 @@ import com.resourcesManager.backend.resourcesManager.model.MembreDepartement;
 import com.resourcesManager.backend.resourcesManager.model.Role;
 import com.resourcesManager.backend.resourcesManager.exceptions.EntityAlreadyExistsException;
 import com.resourcesManager.backend.resourcesManager.exceptions.NotFoundException;
+import com.resourcesManager.backend.resourcesManager.model.User;
 import com.resourcesManager.backend.resourcesManager.repository.DepartementRepository;
 import com.resourcesManager.backend.resourcesManager.repository.MembreDepartementRepository;
 import com.resourcesManager.backend.resourcesManager.repository.RoleRepository;
@@ -45,28 +46,23 @@ public class MembreDepartementServiceImpl implements MembreDepartementService {
 
     @Override
     public MembreDepartement saveMembre(MembreDepartement membre) {
-        if (userRepository.existsByUsername(membre.getUsername()))
-            throw new EntityAlreadyExistsException("Usename:" + membre.getUsername() + " already exists");
-        if (userRepository.existsByEmailIgnoreCase(membre.getEmail()))
-            throw new EntityAlreadyExistsException("email:" + membre.getEmail() + " already exists");
-        Optional<Departement> departement = departementRepository.findById(membre.getDepartement().getId());
-
-        membre.setEmail(membre.getEmail());
+        if (!isMembreValid(membre)) return null;
         membre.setPassword(passwordEncoder.encode(membre.getPassword()));
-        membre.setDepartement(departement.get());
-
-        return membreDepartementRepository.save(membre);
+        String roleName = membre.getRoles().stream().findFirst().get().getNomRole();
+        return addRoleToMembre(membre, roleName);
     }
 
+
     @Override
-    public MembreDepartement updateMembreDepartement(MembreDepartement membreDepartement) {
-        return membreDepartementRepository.save(membreDepartement);
+    public MembreDepartement updateMembreDepartement(MembreDepartement membre) {
+        String roleName = membre.getRoles().stream().findFirst().get().getNomRole();
+        return addRoleToMembre(membre, roleName);
     }
 
     @Override
     public List<MembreDepartement> getMembresByIdDepartement(Long idDepartement) {
 
-        return this.membreDepartementRepository.getMembreDepartementByDepartementId(idDepartement);
+        return membreDepartementRepository.getMembreDepartementByDepartementId(idDepartement);
     }
 
     @Override
@@ -76,10 +72,19 @@ public class MembreDepartementServiceImpl implements MembreDepartementService {
         membreDepartementRepository.delete(membreDepartement);
     }
 
-    private Role getRole(String roleName) {
-        return roleRepository.findRoleByNomRole(roleName)
-                .orElseThrow(() -> new NotFoundException("role: " + roleName + " NOT FOUND !!"));
 
+    private boolean isMembreValid(MembreDepartement membre) {
+        if (userRepository.existsByUsername(membre.getUsername()))
+            throw new EntityAlreadyExistsException("username:" + membre.getUsername() + " already exists");
+        if (userRepository.existsByEmailIgnoreCase(membre.getEmail()))
+            throw new EntityAlreadyExistsException("email:" + membre.getEmail() + " already exists");
+        return true;
     }
 
+    private MembreDepartement addRoleToMembre(MembreDepartement membre, String roleName) {
+        Role role = roleRepository.findRoleByNomRole(roleName)
+                .orElseThrow(() -> new NotFoundException(roleName + " does not exist"));
+        membre.setRoles(List.of(role));
+        return membreDepartementRepository.save(membre);
+    }
 }

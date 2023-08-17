@@ -66,8 +66,8 @@ public class AuthController {
 
         String appPort = "4200";
         Fournisseur savedFournisseur = authenticationService.registerFournisseur(fournisseur);
-        String appURL = "http://" + request.getServerName() + ":" + appPort + request.getContextPath();
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(savedFournisseur, request.getLocale(), appURL));
+//        String appURL = "http://" + request.getServerName() + ":" + appPort + request.getContextPath();
+//        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(savedFournisseur, request.getLocale(), appURL));
 
         return savedFournisseur;
     }

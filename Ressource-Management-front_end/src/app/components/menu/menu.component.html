@@ -2,70 +2,61 @@
   <div class="main-menu-content mt-5">
     <ul class="navigation navigation-main " id="main-menu-navigation" data-menu="menu-navigation">
       <li *ngIf="hasRole([ 'ROLE_RESPONSABLE'])"><a routerLink="/departements"><i class="feather icon-layers"></i><span
-        class="menu-item">Departements</span></a>
+            class="menu-item">Departements</span></a>
       </li>
       <li *ngIf="hasRole([ 'ROLE_RESPONSABLE'])"><a routerLink="/membres"><i class="feather icon-users"></i><span
-        class="menu-item">Membres</span></a>
-
-      <li *ngIf="hasRole(['ROLE_ENSEIGNANT',' ROLE_CHEF_DEPARTEMENT'])"><a routerLink="/addBesoins"><i
-        class="feather icon-plus-square"></i><span class="menu-item"
-                                                   data-i18n="Shop">Exprimer Besoins</span></a>
+            class="menu-item">Membres</span></a>
+      <li *ngIf="hasRole(['ROLE_ENSEIGNANT','ROLE_CHEF_DEPARTEMENT'])"><a routerLink="/addBesoins"><i
+            class="feather icon-plus-square"></i><span class="menu-item" data-i18n="Shop">Exprimer Besoins</span></a>
       </li>
-      <li *ngIf="hasRole(['ROLE_CHEF_DEPARTEMENT'])"><a routerLink="/listeBesoin"><i
-        class="feather icon-list"></i><span class="menu-item" data-i18n="Details">Liste Besoins</span></a>
+      <li *ngIf="hasRole(['ROLE_CHEF_DEPARTEMENT'])"><a routerLink="/listeBesoin"><i class="feather icon-list"></i><span
+            class="menu-item" data-i18n="Details">Liste Besoins</span></a>
       <li *ngIf="hasRole(['ROLE_RESPONSABLE'])" class="nav-item"><a routerLink="/appelOffre">
-        <i class="fa fa-book"></i><span class="menu-title" data-i18n="Google Maps">Appels d'offre</span></a>
+          <i class="fa fa-book"></i><span class="menu-title" data-i18n="Google Maps">Appels d'offre</span></a>
       </li>
       <li *ngIf="hasRole(['ROLE_FOURNISSEUR'])" class="nav-item"><a routerLink="/offre">
-        <i class="fa fa-list-alt"></i><span class="menu-title" data-i18n="Google Maps">Offres</span></a>
+          <i class="fa fa-list-alt"></i><span class="menu-title" data-i18n="Google Maps">Offres</span></a>
       </li>
       <li *ngIf="hasRole([ 'ROLE_RESPONSABLE'])"><a routerLink="/ressources/ordinateurs"><i class="feather icon-tv"></i>
-        <span class="menu-item"
-              data-i18n="Second Level">Ordinateurs</span></a>
+          <span class="menu-item" data-i18n="Second Level">Ordinateurs</span></a>
       </li>
       <li *ngIf="hasRole([ 'ROLE_RESPONSABLE'])"><a routerLink="/ressources/imprimantes"><i
-        class="feather icon-printer"></i><span class="menu-item"
-                                               data-i18n="Second Level">Imprimantes</span></a>
+            class="feather icon-printer"></i><span class="menu-item" data-i18n="Second Level">Imprimantes</span></a>
       </li>
       <li>
         <a *ngIf="hasRole(['ROLE_ENSEIGNANT'])" routerLink="/signalerPanne"><i
-          class="feather icon-alert-circle"></i><span
-          class="menu-item"
-          data-i18n="Shop">Signaler panne</span></a>
+            class="feather icon-alert-circle"></i><span class="menu-item" data-i18n="Shop">Signaler panne</span></a>
       </li>
       <li>
         <a *ngIf="hasRole(['ROLE_ENSEIGNANT'])" routerLink="/membresDepartement/pannes"> <i
-          class="feather icon-bookmark"></i><span class="menu-item"
-                                                  data-i18n="Details">Pannes signalés</span></a>
+            class="feather icon-bookmark"></i><span class="menu-item" data-i18n="Details">Pannes signalés</span></a>
       </li>
       <li *ngIf="hasRole(['ROLE_TECHNICIEN'])">
         <a routerLink="/technicien/pannes"><i class="feather icon-alert-circle"></i><span class="menu-item"
-                                                                                          data-i18n="Shop">Traitement pannes</span></a>
+            data-i18n="Shop">Traitement pannes</span></a>
       </li>
       <li *ngIf="hasRole([ 'ROLE_RESPONSABLE'])">
         <a routerLink="/responsable/constats"><i class="feather icon-file"></i><span class="menu-item"
-                                                                                     data-i18n="Shop">Constats</span></a>
+            data-i18n="Shop">Constats</span></a>
       </li>
       <li *ngIf="hasRole([ 'ROLE_RESPONSABLE'])">
         <a routerLink="/techniciens"><i class="feather icon-users"></i><span class="menu-item"
-                                                                             data-i18n="Shop">Techniciens</span></a>
+            data-i18n="Shop">Techniciens</span></a>
       </li>
       <ul *ngIf="hasRole(['ROLE_FOURNISSEUR'])">
         <li>
           <a><i class="feather icon-file"></i><span class="menu-title" data-i18n="Ecommerce">fournisseur demandes
-            <i class="feather icon-chevron-down"></i></span></a>
+              <i class="feather icon-chevron-down"></i></span></a>
         </li>
         <li>
-          <a><i class="feather icon-circle"></i><span class="menu-item"
-                                                      data-i18n="Shop">changement</span><span
-            class="badge badge-pill badge-primary ml-1">{{
-            changerCount
-            }}</span></a>
-          <a><i class="feather icon-circle"></i><span class="menu-item"
-                                                      data-i18n="Details">reparation</span><span
-            class="badge badge-pill badge-primary ml-1">{{
-            reparerCount
-            }}</span></a>
+          <a><i class="feather icon-circle"></i><span class="menu-item" data-i18n="Shop">changement</span><span
+              class="badge badge-pill badge-primary ml-1">{{
+              changerCount
+              }}</span></a>
+          <a><i class="feather icon-circle"></i><span class="menu-item" data-i18n="Details">reparation</span><span
+              class="badge badge-pill badge-primary ml-1">{{
+              reparerCount
+              }}</span></a>
         </li>
       </ul>
     </ul>

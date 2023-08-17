@@ -1,9 +1,12 @@
 package com.resourcesManager.backend.resourcesManager.controller;
 
+import com.resourcesManager.backend.resourcesManager.mapper.MapUserToUserDetails;
 import com.resourcesManager.backend.resourcesManager.model.Departement;
+import com.resourcesManager.backend.resourcesManager.model.User;
 import com.resourcesManager.backend.resourcesManager.services.impl.DepartementServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

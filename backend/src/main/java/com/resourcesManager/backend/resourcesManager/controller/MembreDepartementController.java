@@ -2,6 +2,7 @@ package com.resourcesManager.backend.resourcesManager.controller;
 
 import com.resourcesManager.backend.resourcesManager.model.MembreDepartement;
 import com.resourcesManager.backend.resourcesManager.services.impl.MembreDepartementServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +31,12 @@ public class MembreDepartementController {
     }
 
     @PostMapping
-    public MembreDepartement saveMembreDepartement(@RequestBody MembreDepartement membreDepartement) {
+    public MembreDepartement saveMembreDepartement(@RequestBody @Valid MembreDepartement membreDepartement) {
         return membreDepartementService.saveMembre(membreDepartement);
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public MembreDepartement updateMembreDepartement(@PathVariable String id, @RequestBody MembreDepartement membreDepartement) {
         membreDepartement.setId(id);
         return membreDepartementService.updateMembreDepartement(membreDepartement);

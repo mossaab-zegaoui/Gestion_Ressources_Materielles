@@ -28,8 +28,8 @@
                                                 <form [formGroup]="loginForm">
                                                     <fieldset
                                                         class="form-label-group form-group position-relative has-icon-left">
-                                                        <input [disabled]="state.dataState === DataState.LOADING"
-                                                            type="text" name="username" id="username"
+                                                        <input type="text" name="username" id="username"
+                                                            [disabled]="state.dataState === DataState.LOADING"
                                                             class="form-control" placeholder="Your Name" required
                                                             data-validation-required-message="This name field is required"
                                                             formControlName="username"
@@ -43,9 +43,9 @@
                                                         <label for="username">username</label>
                                                     </fieldset>
                                                     <fieldset class="form-label-group position-relative has-icon-left">
-                                                        <input [disabled]="state.dataState === DataState.LOADING"
-                                                            type="password" class="form-control" id="user-password"
+                                                        <input type="password" class="form-control" id="user-password"
                                                             placeholder="Password" required formControlName="password"
+                                                            [disabled]="state.dataState === DataState.LOADING"
                                                             name="password"
                                                             [ngClass]="loginForm.controls['password'].dirty && loginForm.hasError('required','password')?'is-invalid':''">
                                                         <small
@@ -63,9 +63,9 @@
                                                     </div>
                                                     <a routerLink="/register"
                                                         class="btn btn-outline-primary float-left btn-inline">Register</a>
-                                                    <button [disabled]="state.dataState === DataState.LOADING"
-                                                        type="submit" class="btn btn-primary float-right btn-inline"
-                                                        id="type-success" (click)="onLogin()">Login</button>
+                                                    <button type="submit" class="btn btn-primary float-right btn-inline"
+                                                        id="type-success" (click)="onLogin()"
+                                                        [disabled]="state.dataState === DataState.LOADING">Login</button>
 
                                                 </form>
                                             </div>
@@ -73,15 +73,6 @@
                                                 class="spinner-border spinner-border-sm" role="status"
                                                 aria-hidden="true"></span>
                                             <span *ngIf="state.dataState === DataState.LOADING">Loading...</span>
-                                        </div>
-                                        <div class="login-footer mt-1">
-                                            <div class="divider">
-                                                <div class="divider-text">OR</div>
-                                            </div>
-                                            <div class="footer-btn d-inline">
-                                                <a href="#" class="btn btn-google"><span
-                                                        class="fa fa-google"></span></a>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

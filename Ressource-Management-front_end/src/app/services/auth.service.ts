@@ -1,12 +1,17 @@
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams,} from '@angular/common/http';
-import {Injectable} from '@angular/core';
-import {map, Observable, tap} from 'rxjs';
-import {Fournisseur} from '../interface/user.interface';
-import {JwtHelperService} from '@auth0/angular-jwt';
-import {UpdatePassword} from '../interface/updatePassword';
-import {FormGroup} from '@angular/forms';
-import {Key} from '../enum/key.enum';
-import {Departement, Role} from "../interface/Classes";
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpHeaders,
+  HttpParams,
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
+import { Fournisseur } from '../interface/user.interface';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { UpdatePassword } from '../interface/updatePassword';
+import { FormGroup } from '@angular/forms';
+import { Key } from '../enum/key.enum';
+import { Departement, Role } from '../interface/Classes';
 
 @Injectable({
   providedIn: 'root',
@@ -42,9 +47,13 @@ export class AuthService {
 
   resetPassword$(email: string): Observable<any> {
     const params = new HttpParams().set('email', email);
-    return this.http.post<string>('http://localhost:8080/api/v1/resetPassword', null, {
-      params,
-    });
+    return this.http.post<string>(
+      'http://localhost:8080/api/v1/resetPassword',
+      null,
+      {
+        params,
+      }
+    );
   }
 
   confirmRegistration(token: string | null): Observable<any> {
@@ -59,7 +68,7 @@ export class AuthService {
 
   login$(username: string, password: string): Observable<Key> {
     return this.http
-      .post(`${this.apiUrl}/authenticate`, {username, password})
+      .post(`${this.apiUrl}/authenticate`, { username, password })
       .pipe(tap(console.log));
   }
 
@@ -68,16 +77,20 @@ export class AuthService {
   }
 
   roles$(): Observable<Role[]> {
-    return this.http.get<Role[]>(`${this.apiUrl}/roles`);
+    return this.http
+      .get<Role[]>(`${this.apiUrl}/roles`)
+      .pipe(catchError(this.handleError));
   }
 
   departements$(): Observable<Departement[]> {
-    return this.http.get<Departement[]>(`http://localhost:8080/api/v1/departements`);
+    return this.http.get<Departement[]>(
+      `http://localhost:8080/api/v1/departements`
+    );
   }
 
   onLogout(token: any): Observable<any> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post(`${this.apiUrl}/logout`, {headers: headers});
+    return this.http.post(`${this.apiUrl}/logout`, { headers: headers });
   }
 
   isLoggedIn() {
@@ -90,5 +103,19 @@ export class AuthService {
     return jwtHelper.decodeToken(token);
   }
 
-
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.log(error);
+    let errorMessage: string;
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `A client error occurred - ${error.error.message}`;
+    } else {
+      if (error.error.reason) {
+        errorMessage = error.error.message;
+        console.log(errorMessage);
+      } else {
+        errorMessage = `An error occurred - Error status ${error.status}`;
+      }
+    }
+    return throwError(() => errorMessage);
+  }
 }

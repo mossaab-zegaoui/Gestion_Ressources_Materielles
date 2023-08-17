@@ -9,13 +9,14 @@ export interface User {
     nom?: string;
     prenom?: string;
     roles?: Role[];
+    enabled:boolean;
 }
 
 export interface Fournisseur extends User {
     addresse?: string;
     nomSociete: string;
     gerant?: string;
-    isBlackList?: boolean;
+    blackList?: boolean;
     motifDeBlockage?: string;
 }
 
