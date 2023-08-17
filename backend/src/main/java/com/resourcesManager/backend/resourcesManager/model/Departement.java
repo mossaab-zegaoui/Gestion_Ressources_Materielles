@@ -18,7 +18,7 @@ public class Departement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nomDepartement;
-    @OneToMany(mappedBy = "departement", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "departement")
     @JsonIgnore
     private Collection<MembreDepartement> membreDepartements;
 

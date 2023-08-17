@@ -3,72 +3,86 @@ import { NgForm } from '@angular/forms';
 import { Besoin, Imprimante, Ordinateur } from 'src/app/interface/Classes';
 import { AuthService } from 'src/app/services/auth.service';
 import { GestionBesoinsService } from 'src/app/services/gestion-besoins.service';
-import { RAM, CPU, ECRAN, DISQUE, VITESSEIMP, RESOLUTIONIMP } from 'src/app/interface/Consts'
+import {
+  RAM,
+  CPU,
+  ECRAN,
+  DISQUE,
+  VITESSEIMP,
+  RESOLUTIONIMP,
+} from 'src/app/interface/Consts';
 import { ToastService } from 'src/app/services/toast.service';
 import { EventTypes } from 'src/app/interface/event-type';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  map,
+  of,
+  startWith,
+} from 'rxjs';
+import { AppState, DefaultState } from 'src/app/interface/appstate';
+import { DataState } from 'src/app/interface/datastate';
 
 @Component({
   selector: 'app-besoin',
   templateUrl: './besoin.component.html',
-  styleUrls: ['./besoin.component.css']
+  styleUrls: ['./besoin.component.css'],
 })
 export class BesoinComponent {
   [x: string]: any;
 
-  ordinateursBesoin: Ordinateur[] = [];
-  imprimantesBesoin: Imprimante[] = [];
-  typeBesoinToAdd: string = "";
+  type: string = '';
   openAddBesoin: boolean = false;
   isForDepartement: boolean = false;
-  userId!: string;
-  idDepartement!: number;
-  cpu = CPU;
-  ram = RAM;
+  besoinState$: Observable<DefaultState<Besoin>> | null = null;
+  besoin = new BehaviorSubject<Besoin>({ ordinateurs: [], imprimantes: [] });
+  besoin$ = this.besoin.asObservable();
+  cpus = CPU;
+  rams = RAM;
   ecran = ECRAN;
-  disque = DISQUE;
+  disques = DISQUE;
   vitesseimp = VITESSEIMP;
   resolutionimp = RESOLUTIONIMP;
-  public constructor(private gestionBesoinService: GestionBesoinsService, private auth: AuthService, private toastService: ToastService) {
-
-  }
+  public constructor(
+    private gestionBesoinService: GestionBesoinsService,
+    private auth: AuthService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
-    this.getAllOrdinateursBesoin();
-    this.getAllImprimantesBesoin();
-    this.userId = localStorage.getItem('userId')!.replaceAll('"', '');
-    this.idDepartement = Number(localStorage.getItem('departementId')!);
-
-  }
-  public hasRole(role: string[]): boolean {
-    const roles: string[] = this.auth.decodedToken().ROLES.map(
-      (role: { authority: string }) => role.authority
-    );
-    return roles.some((item) => role.includes(item));
-  }
-  public handleSaveBesoins() {
-
-    let formattedDate = this.formateDate(new Date());
-    let besoin: Besoin = {
-      id: null,
-      dateDemande: formattedDate,
-      dateAffectation: null,
-      isAffected: false,
-      idMembreDepartement: this.userId,
-      idDepartement: this.idDepartement,
-      isBesoinInAppelOffre: false,
-      ordinateurs: this.ordinateursBesoin,
-      imprimantes: this.imprimantesBesoin
+    const besoin: any = JSON.parse(localStorage.getItem('besoin')!) || {
+      ordinateurs: [],
+      imprimantes: [],
     };
-    if (this.isForDepartement == false) {
-      besoin.idMembreDepartement = this.userId;
-    }
-    this.gestionBesoinService.addBesoins(besoin).subscribe({
-      next: () => {
-        this.reset();
-        this.toastService.showSuccessToast(EventTypes.Success, "Votre demande besoins a été envoyée");
-      },
-      error: (error) => console.log(error)
-    })
+    this.besoin.next(besoin);
+    this.besoinState$ = of({
+      state: DataState.LOADED,
+      data: this.besoin.value,
+      success: true,
+    });
+  }
+
+  public handleSaveBesoins() {
+    const besoin = JSON.parse(localStorage.getItem('besoin')!);
+    this.besoinState$ = this.gestionBesoinService.addBesoins(besoin).pipe(
+      map(() => {
+        this.besoin.next({ ordinateurs: [], imprimantes: [] });
+        localStorage.removeItem('besoin');
+        this.toastService.showSuccessToast(
+          EventTypes.Success,
+          'Votre demande besoins a été envoyée'
+        );
+        return { state: DataState.LOADED, sucess: true };
+      }),
+      startWith({ state: DataState.LOADING }),
+      catchError((error) =>
+        of({
+          state: DataState.ERROR,
+          error,
+        })
+      )
+    );
   }
 
   public onCheckboxChange() {
@@ -77,127 +91,56 @@ export class BesoinComponent {
 
   public handleCloseAddBesoin() {
     this.openAddBesoin = false;
-    this.typeBesoinToAdd = "";
-    this.resetTypeToAdd();
+    this.type = '';
   }
 
-  reset() {
-    this.handleCloseAddBesoin();
-    this.ordinateursBesoin = [];
-    this.imprimantesBesoin = [];
-    localStorage.removeItem('ordinateursBesoin');
-    localStorage.removeItem('imprimtantsBesoin');
-  }
+  public handleAddRessourceToBesoin(ressourcesForm: NgForm) {
+    console.log(ressourcesForm.value);
 
-  public handleAddRessourceToBesoin(ressourceToAdd: NgForm) {
-    if (this.isForDepartement == true) {
-      if (this.typeBesoinToAdd == 'Ordinateur') {
-        var ordinateur = {} as Ordinateur;
-        ordinateur.type = this.typeBesoinToAdd;
-        ordinateur.cpu = ressourceToAdd.value.cpu;
-        ordinateur.ram = ressourceToAdd.value.ram;
-        ordinateur.disqueDur = ressourceToAdd.value.disquedur;
-        ordinateur.ecran = ressourceToAdd.value.ecran;
-        ordinateur.idDepartement = this.idDepartement;
-        this.ordinateursBesoin.push(ordinateur);
-        this.addOrdinateurToLocalStorage();
-      } else if (this.typeBesoinToAdd == 'Imprimante') {
-        var imprimante = {} as Imprimante;
-        imprimante.type = this.typeBesoinToAdd;
-        imprimante.resolution = ressourceToAdd.value.resolution;
-        imprimante.vitesseImpression = ressourceToAdd.value.vitesseimpression;
-        imprimante.idDepartement = this.idDepartement;
-        this.imprimantesBesoin.push(imprimante);
-        this.addImprimanteToLocalStorage();
-      }
-    } else {
-      if (this.typeBesoinToAdd == 'Ordinateur') {
-        var ordinateur = {} as Ordinateur;
-        ordinateur.type = this.typeBesoinToAdd;
-        ordinateur.cpu = ressourceToAdd.value.cpu;
-        ordinateur.ram = ressourceToAdd.value.ram;
-        ordinateur.disqueDur = ressourceToAdd.value.disquedur;
-        ordinateur.ecran = ressourceToAdd.value.ecran;
-        ordinateur.idDepartement = this.idDepartement;
-        ordinateur.idMembreDepartement = this.userId;
-        this.ordinateursBesoin.push(ordinateur);
-        this.addOrdinateurToLocalStorage();
-      } else if (this.typeBesoinToAdd == 'Imprimante') {
-        var imprimante = {} as Imprimante;
-        imprimante.type = this.typeBesoinToAdd;
-        imprimante.resolution = ressourceToAdd.value.resolution;
-        imprimante.vitesseImpression = ressourceToAdd.value.vitesseimpression;
-        imprimante.idDepartement = Number(localStorage.getItem('departementId'));
-        imprimante.idMembreDepartement = localStorage.getItem('userId');
-        this.imprimantesBesoin.push(imprimante);
-        this.addImprimanteToLocalStorage();
-      }
-    }
-    this.resetTypeToAdd();
+    this.type === 'Ordinateur'
+      ? this.addOrdinateurToLocalStorage(ressourcesForm.value)
+      : this.addImprimanteToLocalStorage(ressourcesForm.value);
+
     this.openAddBesoin = false;
+    this.type = '';
   }
 
-  addOrdinateurToLocalStorage() {
-    let ordinateursLocal = "";
-    this.ordinateursBesoin.forEach(ord => {
-      ordinateursLocal += JSON.stringify(ord) + ";"
+  addOrdinateurToLocalStorage(ordinateur: Ordinateur) {
+    this.besoin.next({
+      ...this.besoin.value,
+      ordinateurs: [...this.besoin.value.ordinateurs!, ordinateur],
     });
-    localStorage.setItem('ordinateursBesoin', ordinateursLocal)
+    localStorage.setItem('besoin', JSON.stringify(this.besoin.value));
   }
 
-  addImprimanteToLocalStorage() {
-    let imprimanteLocal = "";
-    this.imprimantesBesoin.forEach(imp => {
-      imprimanteLocal += JSON.stringify(imp) + ";"
+  addImprimanteToLocalStorage(imprimante: Imprimante) {
+    this.besoin.next({
+      ...this.besoin.value,
+      imprimantes: [...this.besoin.value.imprimantes!, imprimante],
     });
-    localStorage.setItem('imprimtantsBesoin', imprimanteLocal)
+    localStorage.setItem('besoin', JSON.stringify(this.besoin.value));
   }
 
   public chooseRessource(typeSelected: any) {
-    this.typeBesoinToAdd = typeSelected.target.value;
+    this.type = typeSelected.target.value;
   }
 
-  public resetTypeToAdd() {
-    this.typeBesoinToAdd = "";
-  }
-
-  public getAllOrdinateursBesoin() {
-    let ordinateursLocal = localStorage.getItem('ordinateursBesoin');
-    let ordinateursBesoin = ordinateursLocal?.split(";")
-    ordinateursBesoin?.forEach(ord => {
-      if (ord != "")
-        this.ordinateursBesoin?.push(JSON.parse(ord))
-    });
-  }
-
-  public getAllImprimantesBesoin() {
-    let imprimanteLocal = localStorage.getItem('imprimtantsBesoin');
-    let imprimtantesBesoin = imprimanteLocal?.split(";")
-    imprimtantesBesoin?.forEach(imp => {
-      if (imp != "")
-        this.imprimantesBesoin?.push(JSON.parse(imp))
-    });
-  }
-
-  public handleRemoveBesoin(type: string, obj: Ordinateur | Imprimante) {
-    if (type == "Ordinateur") { //@ts-ignore
-      let index = this.ordinateursBesoin.indexOf(obj);
-      this.ordinateursBesoin.splice(index, 1);
-      this.addOrdinateurToLocalStorage();
-    } else if (type == "Imprimante") { //@ts-ignore
-      let index = this.imprimantesBesoin.indexOf(obj);
-      this.imprimantesBesoin.splice(index, 1);
-      this.addImprimanteToLocalStorage();
+  public handleRemoveBesoin(type: string, ressource: any) {
+    if (type === 'Ordinateur') {
+      let id = this.besoin.value.ordinateurs?.indexOf(ressource);
+      const ordinateurs: Ordinateur[] = this.besoin.value.ordinateurs?.filter(
+        (_, index) => index !== id
+      )!;
+      this.besoin.next({ ...this.besoin.value, ordinateurs });
+    } else {
+      let id = this.besoin.value.imprimantes?.indexOf(ressource);
+      const imprimantes: Imprimante[] = this.besoin.value.imprimantes?.filter(
+        (_, index) => index !== id
+      )!;
+      this.besoin.next({ ...this.besoin.value, imprimantes });
     }
-  }
-
-  public formateDate(date: Date) {
-    let today = date;
-    let year = today.getFullYear();
-    let month = String(today.getMonth() + 1).padStart(2, '0');
-    let day = String(today.getDate()).padStart(2, '0');
-    let formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
+    localStorage.removeItem('besoin');
+    localStorage.setItem('besoin', JSON.stringify(this.besoin.value));
   }
 
 }

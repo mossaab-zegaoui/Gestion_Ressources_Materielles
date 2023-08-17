@@ -35,15 +35,16 @@ export class LoginComponent {
   onLogin() {
     if (!this.loginForm.valid)
       return this.validateAllFormsFields(this.loginForm);
-    console.warn(this.loginForm.value);
     this.loginState$ = this.authService
       .login$(this.loginForm.value.username, this.loginForm.value.password)
       .pipe(
         map((response: any) => {
           localStorage.removeItem(Key.TOKEN);
           localStorage.removeItem(Key.REFRESH_TOKEN);
+          localStorage.removeItem("departementId");
           localStorage.setItem(Key.TOKEN, response.accessToken);
           localStorage.setItem(Key.REFRESH_TOKEN, response.refreshToken);
+          localStorage.setItem("departementId",this.authService.decodedToken()!.departementId);
           this.router.navigate(['/home']);
           this.toastService.showSuccessToast(
             EventTypes.Success,

@@ -25,6 +25,7 @@ export class HeadMenuComponent {
   public userId!: string;
   public userRole!: string[];
   public notifsFournisseur: NotifFournisseur[] = [];
+  roles: string[] | null = null;
 
   public constructor(private besoinsService: GestionBesoinsService, private router: Router,
                      private auth: AuthService, private toastService: ToastService,
@@ -34,7 +35,9 @@ export class HeadMenuComponent {
   ngOnInit(): void {
     this.userName = this.auth.decodedToken()!.sub;
     this.isLoggedIn = this.isLoginIn();
-
+    this.roles = this.auth
+    .decodedToken()
+    .ROLES.map((role: { authority: any }) => role.authority);
     this.loadDemandes()
 
     this.getCurrentPath();
@@ -42,7 +45,7 @@ export class HeadMenuComponent {
   }
 
   public hasRole(role: string[]): boolean {
-    return this.userRole?.some(item => role.includes(item));
+    return this.roles?.some((item) => role.includes(item))!;
   }
 
   public loadDemandes() {

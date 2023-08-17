@@ -1,9 +1,12 @@
 package com.resourcesManager.backend.resourcesManager.controller;
 
+import com.resourcesManager.backend.resourcesManager.mapper.MapUserToUserDetails;
 import com.resourcesManager.backend.resourcesManager.model.Besoin;
+import com.resourcesManager.backend.resourcesManager.model.User;
 import com.resourcesManager.backend.resourcesManager.services.BesoinService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,17 +24,18 @@ public class BesoinController {
 
     @GetMapping("")
     public ResponseEntity<List<Besoin>> getAllBesoins() {
+
         return ResponseEntity.ok(besoinService.getAllBesoins());
     }
 
     @PostMapping("")
-    ResponseEntity<Besoin> save(@RequestBody Besoin besoin) {
-        return ResponseEntity.ok(besoinService.saveBesoin(besoin));
+    ResponseEntity<Besoin> save(@RequestBody Besoin besoin, @AuthenticationPrincipal MapUserToUserDetails userDetails) {
+        return ResponseEntity.ok(besoinService.saveBesoin(besoin, userDetails.getUser().getId()));
     }
 
-    @GetMapping("/departement/{id}")
-    ResponseEntity<List<Besoin>> getAllBesoinDepartement(@PathVariable Long id) {
-        return ResponseEntity.ok(besoinService.getBesoinsByDepartement(id));
+    @GetMapping("departement")
+    ResponseEntity<List<Besoin>> getAllBesoinDepartement(@AuthenticationPrincipal MapUserToUserDetails userDetails) {
+        return ResponseEntity.ok(besoinService.getBesoinsByDepartement(userDetails.getUser().getId()));
     }
 
     @DeleteMapping("/membreDepartement/{id}")

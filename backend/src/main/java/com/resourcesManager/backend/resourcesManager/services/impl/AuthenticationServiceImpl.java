@@ -105,6 +105,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         fournisseur.setPassword(passwordEncoder.encode(fournisseur.getPassword()));
         Role role = getRole(ROLE_FOURNISSEUR.name());
         fournisseur.setRoles(List.of(role));
+        fournisseur.setEnabled(true);
         return fournisseurRepository.save(fournisseur);
 
     }

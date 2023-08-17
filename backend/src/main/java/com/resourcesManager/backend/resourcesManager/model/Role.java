@@ -17,8 +17,4 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nomRole;
-    @ManyToMany(mappedBy = "roles")
-    @JsonIgnore
-    private Collection<User> users = new ArrayList<>();
-
 }

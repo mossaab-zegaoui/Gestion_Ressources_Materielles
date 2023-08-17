@@ -1,4 +1,4 @@
-import {DataState} from './datastate';
+import { DataState } from './datastate';
 
 export interface updatePasswordState {
   dataState: DataState;
@@ -10,9 +10,16 @@ export interface updatePasswordState {
 export interface AppState<T> {
   state?: DataState;
   data?: T;
+  message?: string;
   error?: string;
 }
-
+export interface DefaultState<T> {
+  state?: DataState;
+  data?: T;
+  message?: string;
+  error?: string;
+  success?: boolean;
+}
 export interface resgisterState {
   dataState: DataState;
   registerSuccess?: boolean;

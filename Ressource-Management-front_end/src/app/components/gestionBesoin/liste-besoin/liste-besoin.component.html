@@ -22,17 +22,6 @@
             </div>
           </div>
         </div>
-        <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
-          <div class="form-group breadcrum-right">
-            <div class="dropdown">
-              <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                  class="feather icon-settings"></i></button>
-              <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
-                  class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a></div>
-            </div>
-          </div>
-        </div>
       </div>
       <div class="content-body">
         <div class="row">
@@ -41,14 +30,14 @@
           </div>
         </div>
         <!-- Column selectors with Export Options and print table -->
-        <section id="column-selectors">
+        <section id="column-selectors" *ngIf="besoinState$ | async as result">
           <div class="row">
             <div class="col-12">
               <div class="card">
                 <div class="card-header">
                   <h4 class="card-title">Liste des besoins</h4>
                 </div>
-                <div class="card-content">
+                <div class="card-content" *ngIf="departements$ | async as departements">
                   <div class="card-body card-dashboard">
                     <p>Envoyer une demande aux enseignants d'exprimer ses besoins</p>
                     <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light" data-toggle="modal"
@@ -67,7 +56,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr *ngFor="let besoin of listeBesoinsByDepartement">
+                          <tr *ngFor="let besoin of result.data">
                             <td>{{ besoin.id }}</td>
                             <td>{{ besoin.dateDemande | date }}</td>
                             <td>
@@ -82,7 +71,7 @@
                                 </div>
                               </div>
                             </td>
-                            <td>{{ getDepartementName(besoin.idDepartement) }}</td>
+                            <td>{{besoin.idDepartement! | departementNom:departements}}</td>
                             <td>
                               <a data-toggle="modal" data-target="#ressourcesBesoinModal"
                                 (click)="showRessourcesBesoin(besoin)" class="fonticon-wrap"><i
@@ -142,7 +131,7 @@
                           Ordinateurs: {{selectedBesoin?.ordinateurs?.length}}
                         </span>
                       </div>
-                      <div *ngIf=" selectedBesoin && selectedBesoin.ordinateurs.length > 0" id="collapse1"
+                      <div *ngIf=" selectedBesoin && selectedBesoin.ordinateurs!.length > 0" id="collapse1"
                         role="tabpanel" aria-labelledby="headingCollapse1" class="collapse">
                         <div class="card-content">
                           <div class="card-body">
@@ -183,7 +172,7 @@
                           Imprimantes: {{ selectedBesoin?.imprimantes?.length }}
                         </span>
                       </div>
-                      <div *ngIf="selectedBesoin && selectedBesoin.imprimantes.length > 0" id="collapse2"
+                      <div *ngIf="selectedBesoin && selectedBesoin.imprimantes!.length > 0" id="collapse2"
                         role="tabpanel" aria-labelledby="headingCollapse2" class="collapse" aria-expanded="false">
                         <div class="card-content">
                           <div class="card-body">

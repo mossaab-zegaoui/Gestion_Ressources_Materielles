@@ -23,10 +23,10 @@ public class Besoin {
     private Long id;
     private Date dateDemande;
     private Date dateAffectation;
-    private Boolean isAffected = false;
+    private boolean isAffected = false;
     private String idMembreDepartement;
     private Long idDepartement;
-    private Boolean isBesoinInAppelOffre = false;
+    private boolean isBesoinInAppelOffre = false;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Ordinateur> ordinateurs = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

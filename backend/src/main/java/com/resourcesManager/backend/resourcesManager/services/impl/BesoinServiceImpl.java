@@ -1,16 +1,17 @@
 package com.resourcesManager.backend.resourcesManager.services.impl;
 
-import com.resourcesManager.backend.resourcesManager.model.Besoin;
-import com.resourcesManager.backend.resourcesManager.model.Imprimante;
-import com.resourcesManager.backend.resourcesManager.model.Ordinateur;
+import com.resourcesManager.backend.resourcesManager.model.*;
 import com.resourcesManager.backend.resourcesManager.exceptions.NotFoundException;
 import com.resourcesManager.backend.resourcesManager.repository.BesoinRepository;
 import com.resourcesManager.backend.resourcesManager.repository.ImprimanteRepository;
+import com.resourcesManager.backend.resourcesManager.repository.MembreDepartementRepository;
 import com.resourcesManager.backend.resourcesManager.repository.OrdinateurRepository;
 import com.resourcesManager.backend.resourcesManager.services.BesoinService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,19 +22,16 @@ public class BesoinServiceImpl implements BesoinService {
     private final BesoinRepository besoinRepository;
     private final OrdinateurRepository ordinateurRepository;
     private final ImprimanteRepository imprimanteRepository;
-
+    private final MembreDepartementRepository membreDepartementRepository;
 
     @Override
-    public Besoin saveBesoin(Besoin besoin) {
+    public Besoin saveBesoin(Besoin besoin, String userId) {
 
-        List<Ordinateur> ordinateurs = ordinateurRepository.saveAll(besoin.getOrdinateurs()
-                .stream()
-                .toList());
-        List<Imprimante> imprimantes = imprimanteRepository.saveAll(besoin.getImprimantes()
-                .stream().
-                toList());
-        besoin.setOrdinateurs(ordinateurs);
-        besoin.setImprimantes(imprimantes);
+        MembreDepartement membre = membreDepartementRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("user id not found"));
+        besoin.setIdMembreDepartement(userId);
+        besoin.setIdDepartement(membre.getDepartement().getId());
+        besoin.setDateDemande(new Date());
         return besoinRepository.save(besoin);
     }
 
@@ -43,8 +41,11 @@ public class BesoinServiceImpl implements BesoinService {
     }
 
     @Override
-    public List<Besoin> getBesoinsByDepartement(Long id) {
-        return besoinRepository.findBesoinByIdDepartement(id);
+    public List<Besoin> getBesoinsByDepartement(String id) {
+        MembreDepartement membre = membreDepartementRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("membre departement with  " + id + "not found"));
+
+        return besoinRepository.findBesoinByIdDepartement(membre.getDepartement().getId());
     }
 
     @Override
@@ -74,7 +75,7 @@ public class BesoinServiceImpl implements BesoinService {
     public void besoinAddedInAppelOffre(Long id) {
         Optional<Besoin> besoin = besoinRepository.findById(id);
         if (besoin.isEmpty()) throw new NotFoundException("besoin with id = " + id + " not found ");
-        besoin.get().setIsBesoinInAppelOffre(true);
+        besoin.get().setBesoinInAppelOffre(true);
         besoinRepository.save(besoin.get());
     }
 

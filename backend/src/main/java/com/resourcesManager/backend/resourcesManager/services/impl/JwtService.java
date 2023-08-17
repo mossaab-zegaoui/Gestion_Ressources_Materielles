@@ -1,6 +1,11 @@
 package com.resourcesManager.backend.resourcesManager.services.impl;
 
 import com.resourcesManager.backend.resourcesManager.exceptions.InvalidCredentialsException;
+import com.resourcesManager.backend.resourcesManager.model.MembreDepartement;
+import com.resourcesManager.backend.resourcesManager.model.User;
+import com.resourcesManager.backend.resourcesManager.repository.DepartementRepository;
+import com.resourcesManager.backend.resourcesManager.repository.MembreDepartementRepository;
+import com.resourcesManager.backend.resourcesManager.repository.UserRepository;
 import com.resourcesManager.backend.resourcesManager.security.SecurityConstant;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,11 +22,14 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class JwtService {
+     final MembreDepartementRepository membreDepartementRepository;
     public String extractUsername(String token) {
+        String username = extractClaim(token, Claims::getSubject);
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -51,6 +59,7 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstant.ACCESS_TOKEN_EXPIRATION_TIME))
                 .claim("ROLES", userDetails.getAuthorities())
                 .claim("userId", userId)
+                .claim("departementId",getDepartementId(userDetails))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -68,7 +77,6 @@ public class JwtService {
                 .claim("ROLES", userDetails.getAuthorities())
                 .compact();
     }
-
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             final String username = extractUsername(token);
@@ -102,5 +110,9 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SecurityConstant.SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+    private Long getDepartementId(UserDetails userDetails){
+        Optional<MembreDepartement> membreDepartement = membreDepartementRepository.findByUsername(userDetails.getUsername());
+        return membreDepartement.map(departement -> departement.getDepartement().getId()).orElse(null);
     }
 }

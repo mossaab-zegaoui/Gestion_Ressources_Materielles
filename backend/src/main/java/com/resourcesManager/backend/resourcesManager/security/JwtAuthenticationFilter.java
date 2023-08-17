@@ -1,5 +1,7 @@
 package com.resourcesManager.backend.resourcesManager.security;
 
+import com.resourcesManager.backend.resourcesManager.exceptions.ApiException;
+import com.resourcesManager.backend.resourcesManager.exceptions.TokenExpiredException;
 import com.resourcesManager.backend.resourcesManager.services.impl.CustomUserDetailsService;
 import com.resourcesManager.backend.resourcesManager.services.impl.JwtService;
 import jakarta.servlet.FilterChain;
@@ -36,23 +38,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         token = authHeader.substring(7);
-        userName = jwtService.extractUsername(token);
-        UserDetails test = userDetailsService.loadUserByUsername(userName);
+        try {
+            userName = jwtService.extractUsername(token);
+            UserDetails test = userDetailsService.loadUserByUsername(userName);
 
-        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-            if (jwtService.isTokenValid(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+                if (jwtService.isTokenValid(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
             }
-        }
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        } catch (TokenExpiredException exception) {
+            throw new TokenExpiredException("Token is expired");
+        }
     }
 }
 

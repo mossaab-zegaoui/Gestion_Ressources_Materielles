@@ -1,8 +1,8 @@
-import {Component} from '@angular/core';
-import {GestionPannesService} from '../../services/gestion-pannes.service';
-import {Panne, PanneAction, Ressource} from 'src/app/interface/Classes';
-import {HttpErrorResponse} from '@angular/common/http';
-import {AuthService} from 'src/app/services/auth.service';
+import { Component } from '@angular/core';
+import { GestionPannesService } from '../../services/gestion-pannes.service';
+import { Panne, PanneAction, Ressource } from 'src/app/interface/Classes';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -21,13 +21,12 @@ export class MenuComponent {
   constructor(
     private gestionPannesService: GestionPannesService,
     private auth: AuthService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.roles = this.auth.decodedToken().ROLES.map(
-      (role: { authority: any }) => role.authority
-    );
+    this.roles = this.auth
+      .decodedToken()
+      .ROLES.map((role: { authority: any }) => role.authority);
     this.userId = this.auth.decodedToken().userId;
     this.getPannes();
     this.getAllRessources();

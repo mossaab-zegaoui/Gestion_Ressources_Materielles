@@ -1,5 +1,5 @@
 <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-     data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+  data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
   <app-head-menu></app-head-menu>
   <app-menu></app-menu>
   <div class="app-content content" *ngIf="(departements$ | async) as result" [ngSwitch]="result.state">
@@ -13,9 +13,9 @@
               <h2 class="content-header-title float-left mb-0">Gestion Departements</h2>
               <div class="breadcrumb-wrapper col-12">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a>Membres</a>
+                  <li class="breadcrumb-item"><a>Departements</a>
                   </li>
-                  <li class="breadcrumb-item active">Membres
+                  <li class="breadcrumb-item active">Departements
                   </li>
                 </ol>
               </div>
@@ -26,11 +26,10 @@
           <div class="form-group breadcrum-right">
             <div class="dropdown">
               <button class="btn-icon btn btn-primary btn-round btn-sm dropdown-toggle" type="button"
-                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
-                class="feather icon-settings"></i></button>
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i
+                  class="feather icon-settings"></i></button>
               <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">Chat</a><a
-                class="dropdown-item" href="#">Email</a><a class="dropdown-item"
-                                                           href="#">Calendar</a>
+                  class="dropdown-item" href="#">Email</a><a class="dropdown-item" href="#">Calendar</a>
               </div>
             </div>
           </div>
@@ -47,7 +46,7 @@
           Loading ...
           <span></span>
         </section>
-        <section id="column-selectors" *ngSwitchCase="DataState.LOADED">
+        <section id="column-selectors">
           <div class="row">
             <div class="col-12">
               <div class="card">
@@ -56,48 +55,45 @@
                 </div>
                 <div class="card-content">
                   <div class="card-body card-dashboard">
-                    <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
-                            data-toggle="modal" data-target="#addDepartementModal">
+                    <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light" data-toggle="modal"
+                      data-target="#addDepartementModal">
                       <i class="feather icon-plus"></i> Nouveau departement
                     </button>
                     <div>
                       <table class="table" id="departementsTable">
                         <thead>
-                        <tr>
-                          <th>Id</th>
-                          <th>Nom Departement</th>
-                          <th></th>
-                          <th class="d-flex justify-content-end">Actions</th>
-                        </tr>
+                          <tr>
+                            <th>Id</th>
+                            <th>Nom Departement</th>
+                            <th></th>
+                            <th class="d-flex justify-content-end">Actions</th>
+                          </tr>
                         </thead>
                         <tbody>
-                        <tr *ngFor="let departement of result.data">
-                          <td>{{ departement.id }}</td>
-                          <td>{{ departement.nomDepartement }}</td>
-                          <td></td>
-                          <td class="d-flex justify-content-end">
-                            <button type="button"
-                                    class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
-                                    data-toggle="modal" data-target="#editDepartementModal"
-                                    (click)="openModal(departement, 'editDepartement')"><i
-                              class="feather icon-edit"></i></button>
+                          <tr *ngFor="let departement of result.data">
+                            <td>{{ departement.id }}</td>
+                            <td>{{ departement.nomDepartement }}</td>
+                            <td></td>
+                            <td class="d-flex justify-content-end">
+                              <button type="button" class="btn btn-primary mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#editDepartementModal"
+                                (click)="openModal(departement, 'editDepartement')"><i
+                                  class="feather icon-edit"></i></button>
 
-                            <button type="button"
-                                    class="btn btn-danger mr-1 mb-1 waves-effect waves-light"
-                                    data-toggle="modal"
-                                    data-target="#deleteDepartementModal"
-                                    (click)="openModal(departement, 'deleteDepartement')"><i
-                              class="feather icon-trash"></i></button>
-                          </td>
-                        </tr>
+                              <button type="button" class="btn btn-danger mr-1 mb-1 waves-effect waves-light"
+                                data-toggle="modal" data-target="#deleteDepartementModal"
+                                (click)="openModal(departement, 'deleteDepartement')"><i
+                                  class="feather icon-trash"></i></button>
+                            </td>
+                          </tr>
                         </tbody>
                         <tfoot>
-                        <tr>
-                          <th>Id</th>
-                          <th>Nom Departement</th>
-                          <th>Modifier</th>
-                          <th>Supprimer</th>
-                        </tr>
+                          <tr>
+                            <th>Id</th>
+                            <th>Nom Departement</th>
+                            <th></th>
+                            <th class="d-flex justify-content-end">Actions</th>
+                          </tr>
                         </tfoot>
                       </table>
                     </div>
@@ -118,8 +114,8 @@
 
 
   <!-- add departement modal -->
-  <div class="modal fade" id="addDepartementModal" tabindex="-1" role="dialog"
-       aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+  <div class="modal fade" id="addDepartementModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -129,18 +125,17 @@
           </button>
         </div>
         <div class="modal-body">
-          <form>
+          <form [formGroup]="addDepartementForm">
             <label>Nom Departement: </label>
             <div class="form-group controls">
-              <input type="text" [(ngModel)]="nomDepartement" name="nomDepartement" class="form-control"
-                     placeholder="Nom Departement ex:(Génie Informatique)" required>
+              <input type="text" formControlName="nomDepartement" class="form-control"
+                placeholder="Nom Departement ex:(Génie Informatique)" required>
               <div class="help-block"></div>
             </div>
-            <button (click)="handleAjouterDepartement()"
-                    class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal">Ajouter
+            <button (click)="handleAjouterDepartement()" class="btn btn-primary waves-effect waves-light mr-1"
+              data-dismiss="modal">Ajouter
             </button>
-            <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
-                    data-dismiss="modal">Annuler
+            <button type="button" class="btn btn-danger waves-effect waves-light mr-1" data-dismiss="modal">Annuler
             </button>
           </form>
         </div>
@@ -150,7 +145,7 @@
 
   <!-- edit departement modal -->
   <div class="modal fade" id="editDepartementModal" tabindex="-1" role="dialog"
-       aria-labellemodal-bodyupdatedby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+    aria-labellemodal-bodyupdatedby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -161,20 +156,17 @@
         </div>
         <div class="modal-body">
           <form [formGroup]="editDepartementForm">
+            <input type="hidden" formControlName="id">
             <label>Nom Departement: </label>
             <div class="form-group">
-              <input type="text" name="nomDepartement" formControlName="nomDepartement"
-                     placeholder="Email Address" class="form-control"
-                     placeholder="Nom Departement ex:(Génie Informatique)">
+              <input type="text" name="nomDepartement" formControlName="nomDepartement" placeholder="Email Address"
+                class="form-control" placeholder="Nom Departement ex:(Génie Informatique)">
 
             </div>
             <button type="submit" class="btn btn-primary waves-effect waves-light mr-1" data-dismiss="modal"
-                    aria-label="close"
-                    type="submit"
-                    (click)="handleEditDepartementForm()">Update
+              aria-label="close" type="submit" (click)="handleEditDepartementForm()">Update
             </button>
-            <button type="button" class="btn btn-danger waves-effect waves-light mr-1"
-                    data-dismiss="modal">Annuler
+            <button type="button" class="btn btn-danger waves-effect waves-light mr-1" data-dismiss="modal">Annuler
             </button>
           </form>
         </div>
@@ -184,7 +176,7 @@
 
   <!-- delete departement modal -->
   <div class="modal fade text-left" id="deleteDepartementModal" tabindex="-1" role="dialog"
-       aria-labelledby="myModalLabel120" style="display: none;" aria-hidden="true">
+    aria-labelledby="myModalLabel120" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
       <div class="modal-content">
         <div class="modal-header bg-danger white">
@@ -194,14 +186,13 @@
           </button>
         </div>
         <div class="modal-body">
-        Etes vous sur de supprimer ce département ?
+          Etes vous sur de supprimer ce département ?
         </div>
         <div class="modal-footer">
-          <button type="button" (click)="handleDeleteDepartement()"
-                  class="btn btn-danger waves-effect waves-light mr-1" data-dismiss="modal">Confirmer
+          <button type="button" (click)="handleDeleteDepartement()" class="btn btn-danger waves-effect waves-light mr-1"
+            data-dismiss="modal">Confirmer
           </button>
-          <button type="button" class="btn btn-light waves-effect waves-light mr-1"
-                  data-dismiss="modal">Annuler
+          <button type="button" class="btn btn-light waves-effect waves-light mr-1" data-dismiss="modal">Annuler
           </button>
         </div>
       </div>

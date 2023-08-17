@@ -17,6 +17,9 @@ import { OffreService } from '../../services/offre.service';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { EventTypes } from '../../interface/event-type';
+import { Observable, catchError, map, of, startWith } from 'rxjs';
+import { DefaultState } from 'src/app/interface/appstate';
+import { DataState } from 'src/app/interface/datastate';
 declare var $: any;
 
 @Component({
@@ -35,7 +38,10 @@ export class AppelOffreComponent {
   public membresDep: MembreDepartement[] = [];
   public blackListOpened: boolean = false;
   selectAll: boolean = false;
-
+  //
+  appelOffresState$: Observable<DefaultState<AppelOffre[]>> | null = null;
+  besoinsNotInAppelOffre$: Observable<DefaultState<Besoin[]>> | null = null;
+  //
   constructor(
     private appelOffreService: GestionAppelOffreService,
     private besoinService: GestionBesoinsService,
@@ -46,6 +52,24 @@ export class AppelOffreComponent {
   ) {}
 
   ngOnInit(): void {
+    this.appelOffresState$ = localStorage.getItem('appelsOffres')
+      ? of({
+          state: DataState.LOADED,
+          data: JSON.stringify(localStorage.getItem('appelsOffres')!),
+        })
+      : this.appelOffreService.getAllAppelOffre().pipe(
+          map((response) => {
+            return { state: DataState.LOADED, data: response };
+          }),
+          startWith({ state: DataState.LOADING }),
+          catchError((error) =>
+            of({
+              state: DataState.ERROR,
+              error,
+            })
+          )
+        );
+    //
     this.getDepartements();
     this.getAllMembresDepartement();
     this.loadAppelsOffre();
@@ -53,9 +77,9 @@ export class AppelOffreComponent {
   }
 
   public hasRole(role: string[]): boolean {
-    const roles: string[] = this.auth.decodedToken().ROLES.map(
-      (role: { authority: string }) => role.authority
-    );
+    const roles: string[] = this.auth
+      .decodedToken()
+      .ROLES.map((role: { authority: string }) => role.authority);
     return roles.some((item) => role.includes(item));
   }
   loadAppelsOffre() {
@@ -67,7 +91,6 @@ export class AppelOffreComponent {
     this.gestionDepartementsService.getAllDepartements().subscribe({
       next: (data: Departement[]) => {
         this.departements = data;
-        this.ngAfterViewInit();
       },
       error: (error: HttpErrorResponse) => {
         console.log(error);
@@ -83,7 +106,6 @@ export class AppelOffreComponent {
       error: (error) => console.log(error),
     });
   }
-
   public getMembreDepartement(
     idMembre: string | null | undefined
   ): MembreDepartement | undefined {
@@ -104,6 +126,8 @@ export class AppelOffreComponent {
   }
 
   loadBesoinsNotInAppelOffre(): void {
+    
+
     this.besoinService.getBesoinsNotInAppelOffre().subscribe({
       next: (data: Besoin[]) => {
         this.besoinsNotInAppelOffre = data;
@@ -121,26 +145,23 @@ export class AppelOffreComponent {
     this.appelOffreService.getAllAppelOffre().subscribe({
       next: (data: AppelOffre[]) => {
         this.appelsOffre = data;
-        this.ngAfterViewInit();
       },
       error: (error: HttpErrorResponse) => {
         console.log(error);
       },
     });
   }
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      $(document).ready(function () {
-        $('#appelsOffreTable').DataTable();
-      });
-    }, 500);
-  }
 
   handleCreerOffre(): void {
+
+    
     this.loadBesoinsNotInAppelOffre();
 
-    if (!this.besoinsNotInAppelOffre.some(besoin => besoin.isSelected)) {
-      this.toastService.showInfoToast(EventTypes.Info, 'Sélectionnez un besoin');
+    if (!this.besoinsNotInAppelOffre.some((besoin) => besoin.isSelected)) {
+      this.toastService.showInfoToast(
+        EventTypes.Info,
+        'Sélectionnez un besoin'
+      );
       return;
     }
 
@@ -148,7 +169,9 @@ export class AppelOffreComponent {
       id: this.appelsOffre.length + 1,
       datePub: null,
       isAffected: false,
-      besoins: this.besoinsNotInAppelOffre.filter(besoin => besoin.isSelected)
+      besoins: this.besoinsNotInAppelOffre.filter(
+        (besoin) => besoin.isSelected
+      ),
     };
     this.appelsOffre.push(currentAppelOffre);
   }
@@ -220,9 +243,7 @@ export class AppelOffreComponent {
 
   public accepterOffre(offre: Offre | undefined): void {
     this.offreService.accepterOffre(offre).subscribe({
-      next: () => {
-        this.ngAfterViewInit();
-      },
+      next: () => {},
       error: (error: HttpErrorResponse) => {
         console.log(error);
       },
